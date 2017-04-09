@@ -7115,7 +7115,7 @@ ${#ids.prev('someId')}
 Thymeleaf's Markup Selectors are directly borrowed from Thymeleaf's parsing 
 library: [AttoParser](http://attoparser.org).
 -->
-Thymeleafのマークアップセレクターには、Thymeleafのパース用ライブラリである [AttoParser](http://attoparser.org) の機能を直接利用しています。
+Thymeleafはマークアップセレクターとして、Thymeleafのパース用ライブラリである [AttoParser](http://attoparser.org) の機能を直接利用しています。
 
 <!--
 The syntax for this selectors has large similarities with that of selectors in
@@ -7123,14 +7123,14 @@ XPath, CSS and jQuery, which makes them easy to use for most users. You can have
 a look at the complete syntax reference at the
 [AttoParser documentation](http://www.attoparser.org/apidocs/attoparser/2.0.0.RELEASE/org/attoparser/select/package-summary.html).
 -->
-このセレクターの構文はXPathやCSSやjQueryのセレクターにとても良く似ているため、多くのユーザーにとって使いやすいものになっています。構文についての完全なリファレンスはこちらで確認することができます: [AttoParser documentation](http://www.attoparser.org/apidocs/attoparser/2.0.0.RELEASE/org/attoparser/select/package-summary.html)
+その構文はXPathやCSSやjQueryのセレクターにとても良く似ているため、多くのユーザーにとって使いやすいものになっています。完全なリファレンスはこちらで確認することができます: [AttoParser documentation](http://www.attoparser.org/apidocs/attoparser/2.0.0.RELEASE/org/attoparser/select/package-summary.html)
 
 <!--
 For example, the following selector will select every `<div>` with the class `content`,
 in every position inside the markup (note this is not as concise as it could be,
 read on to know why):
 -->
-例えば、次のセレクターはマークアップの中で `content` クラスを持った `<div>` を全て取得します(読んだら分かると思いますが、ものすごく簡潔というわけではありませんね):
+例えば、次のセレクターはマークアップの中で `content` クラスを持った `<div>` を全て取得します(読み進めると分かりますが、この書き方が最も簡潔というわけではありません):
 
 ```html
 <div th:insert="mytemplate :: //div[@class='content']">...</div>
@@ -7241,14 +7241,14 @@ Direct _jQuery-like_ selectors:
 
  * `x%oneref` は `<x>` タグの中で `th:ref="oneref"` または `th:fragment="oneref"` 属性を持つものを意味します。
 
- * `%oneref` は、タグの種類に関係なく `th:ref="oneref"` または `th:fragment="oneref"` 属性を持つものを意味します。参照は要素名の代わりに使用することができるので、実際は単に `oneref` と同等であることに留意してください。
+ * `%oneref` は、タグの種類に関係なく `th:ref="oneref"` または `th:fragment="oneref"` 属性を持つものを意味します。参照は要素名の代わりに使用することができるので、実際のところ単に `oneref` と記述するのと同等であることに留意してください。
 
  * ダイレクトセレクターと属性セレクターは混ぜることができます: `a.external[@href^='https']`.
 
 <!--
 So the above Markup Selector expression:
 -->
-ということで、上記のマークアップセレクター式は:
+ということで、前述のマークアップセレクター式は:
 
 ```html
 <div th:insert="mytemplate :: //div[@class='content']">...</div>
@@ -7265,7 +7265,7 @@ Could be written as:
 <!--
 Examining a different example, this:
 -->
-また別の例を見てみると、これは:
+別の例を見てみましょう:
 
 ```html
 <div th:replace="mytemplate :: myfrag">...</div>
@@ -7276,7 +7276,7 @@ Will look for a `th:fragment="myfrag"` fragment signature (or `th:ref`
 references). But would also look for tags with name `myfrag` if they existed
 (which they don't, in HTML). Note the difference with:
 -->
-`th:fragment="myfrag"` フラグメントシグニチャ(または `th:ref` 参照)を探します。また、それと同時に `myfrag` という名前のタグがあるかどうかも探します(HTMLには存在しませんが)。ですので、次の例との違いに留意してください:
+これは `th:fragment="myfrag"` フラグメントシグニチャ(または `th:ref` 参照)を探します。また、それと同時に `myfrag` という名前のタグがあるかどうかも探します(HTMLにはそんなタグは存在しませんが)。ですので、次の例との違いに留意してください:
 
 ```html
 <div th:replace="mytemplate :: .myfrag">...</div>
@@ -7298,7 +7298,7 @@ Markup Selectors understand the class attribute to be **multivalued**, and
 therefore allow the application of selectors on this attribute even if the
 element has several class values.
 -->
-マークアップセレクターは **複数の値を持った** class属性に対応しているので、要素がいくつかのclass値を持っている場合でも、セレクターを適用することができます。
+マークアップセレクターは **複数の値を持った** class属性に対応しているので、要素が複数のclass値を持っている場合でも、セレクターを適用することができます。
 
 <!--
 For example, `div.two` will match `<div class="one two three" />`
