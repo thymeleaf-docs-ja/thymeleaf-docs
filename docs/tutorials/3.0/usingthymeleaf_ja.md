@@ -7108,8 +7108,9 @@ ${#ids.prev('someId')}
 
 
 
-20 Appendix C: DOM Selector syntax
-==================================
+
+20 Appendix C: Markup Selector Syntax
+=====================================
 
 <!--
 Thymeleaf's Markup Selectors are directly borrowed from Thymeleaf's parsing 
@@ -7287,6 +7288,7 @@ references). But would also look for tags with name `myfrag` if they existed
 caring about `th:fragment` signatures (or `th:ref` references). 
 -->
 ...こちらは実際に `class="myfrag"` の要素をすべての要素の中から探しますが、 `th:fragment="myfrag"` フラグメントシグニチャ(または `th:ref` 参照)のことは探しません。
+
 
 <!--
 ###Multivalued class matching
