@@ -7107,39 +7107,55 @@ ${#ids.prev('someId')}
 ```
 
 
-19 Appendix C: DOM Selector syntax
-==================================
+
+
+20 Appendix C: Markup Selector Syntax
+=====================================
 
 <!--
-DOM Selectors borrow syntax features from XPATH, CSS and jQuery, in order to provide a powerful and easy to use way to specify template fragments.
+Thymeleaf's Markup Selectors are directly borrowed from Thymeleaf's parsing 
+library: [AttoParser](http://attoparser.org).
 -->
-DOMセレクターはXPATHやCSSやjQueryの構文を参考にして、テンプレートフラグメントを特定するための簡単かつパワフルな方法を提供しています。
+Thymeleafはマークアップセレクターとして、Thymeleafのパース用ライブラリである [AttoParser](http://attoparser.org) の機能を直接利用しています。
 
 <!--
-For example, the following selector will select every `<div>` with the class `content`, in every position inside the markup:
+The syntax for this selectors has large similarities with that of selectors in
+XPath, CSS and jQuery, which makes them easy to use for most users. You can have
+a look at the complete syntax reference at the
+[AttoParser documentation](http://www.attoparser.org/apidocs/attoparser/2.0.0.RELEASE/org/attoparser/select/package-summary.html).
 -->
-例えば、次のセレクターはマークアップの中で `content` クラスを持った `<div>` を全て取得します:
+その構文はXPathやCSSやjQueryのセレクターにとても良く似ているため、多くのユーザーにとって使いやすいものになっています。完全なリファレンスはこちらで確認することができます: [AttoParser documentation](http://www.attoparser.org/apidocs/attoparser/2.0.0.RELEASE/org/attoparser/select/package-summary.html)
+
+<!--
+For example, the following selector will select every `<div>` with the class `content`,
+in every position inside the markup (note this is not as concise as it could be,
+read on to know why):
+-->
+例えば、次のセレクターはマークアップの中で `content` クラスを持った `<div>` を全て取得します(読み進めると分かりますが、この書き方が最も簡潔というわけではありません):
 
 ```html
-<div th:include="mytemplate :: [//div[@class='content']]">...</div>
+<div th:insert="mytemplate :: //div[@class='content']">...</div>
 ```
 
 <!--
-The basic syntax inspired from XPath includes:
+The basic syntax includes:
 
  * `/x` means direct children of the current node with name x.
 
  * `//x` means children of the current node with name x, at any depth.
 
- * `x[@z="v"]` means elements with name x and an attribute called z with value "v".
+ * `x[@z="v"]` means elements with name x and an attribute called z with value
+   "v".
 
- * `x[@z1="v1" and @z2="v2"]` means elements with name x and attributes z1 and z2 with values "v1" and "v2", respectively.
+ * `x[@z1="v1" and @z2="v2"]` means elements with name x and attributes z1 and
+   z2 with values "v1" and "v2", respectively.
 
  * `x[i]` means element with name x positioned in number i among its siblings.
 
- * `x[@z="v"][i]` means elements with name x, attribute z with value "v" and positioned in number i among its siblings that also match this condition.
+ * `x[@z="v"][i]` means elements with name x, attribute z with value "v" and
+   positioned in number i among its siblings that also match this condition.
 -->
-XPathを参考にした基本構文には次のようなものがあります:
+基本構文には次のようなものがあります:
 
  * `/x` 現在のノードの直接の子の中でxという名前を持つノード。
 
@@ -7157,24 +7173,34 @@ XPathを参考にした基本構文には次のようなものがあります:
 <!--
 But more concise syntax can also be used:
 
- * `x` is exactly equivalent to `//x` (search an element with name or reference `x` at any depth level).
+ * `x` is exactly equivalent to `//x` (search an element with name or reference
+   `x` at any depth level, a *reference* being a `th:ref` or a `th:fragment` attribute).
 
- * Selectors are also allowed without element name/reference, as long as they include a specification of arguments. So `[@class='oneclass']` is a valid selector that looks for any elements (tags) with a class attribute with value "oneclass".
+ * Selectors are also allowed without element name/reference, as long as they
+   include a specification of arguments. So `[@class='oneclass']` is a valid
+   selector that looks for any elements (tags) with a class attribute with value
+   `"oneclass"`.
 -->
-ですが、もっと簡潔な構文もあります:
+ですが、もっと簡潔な構文を使うこともできます:
 
- * `x` は `//x` と全く同じ意味です(深さに関係なく `x` という名前または参照を持つ要素を探します)。
+ * `x` は `//x` と全く同じ意味です(深さに関係なく `x` という名前または参照を持つ要素を探します。「参照」とは `th:ref` 属性や `th:fragment` 属性のことです)。
 
- * 引数を持つ場合は要素名や参照を指定しなくても大丈夫です。ですので `[@class='oneclass']` は、class属性の値が"oneclass"の要素(タグ)を探す、という意味の有効なセレクターになります。
+ * 引数の部分を持つ場合は、要素名や参照を指定しなくても大丈夫です。ですので `[@class='oneclass']` は、class属性の値が `"oneclass"` の要素(タグ)を探す、という意味の有効なセレクターになります。
 
 <!--
 Advanced attribute selection features:
 
- * Besides `=` (equal), other comparison operators are also valid: `!=` (not equal), `^=` (starts with) and `$=` (ends with). For example: `x[@class^='section']` means elements with name `x` and a value for attribute `class` that starts with `section`.
+ * Besides `=` (equal), other comparison operators are also valid: `!=` (not
+   equal), `^=` (starts with) and `$=` (ends with). For example: `x[@class^='section']`
+   means elements with name `x` and a value for attribute `class` that starts
+   with `section`.
 
- * Attributes can be specified both starting with `@` (XPath-style) and without (jQuery-style). So `x[z='v']` is equivalent to `x[@z='v']`.
+ * Attributes can be specified both starting with `@` (XPath-style) and without
+   (jQuery-style). So `x[z='v']` is equivalent to `x[@z='v']`.
  
- * Multiple-attribute modifiers can be joined both with `and` (XPath-style) and also by chaining multiple modifiers (jQuery-style). So `x[@z1='v1' and @z2='v2']` is actually equivalent to `x[@z1='v1'][@z2='v2']` (and also to `x[z1='v1'][z2='v2']`).
+ * Multiple-attribute modifiers can be joined both with `and` (XPath-style) and
+   also by chaining multiple modifiers (jQuery-style). So `x[@z1='v1' and @z2='v2']`
+   is actually equivalent to `x[@z1='v1'][@z2='v2']` (and also to `x[z1='v1'][z2='v2']`).
 -->
 高度な属性選択機能:
 
@@ -7195,9 +7221,12 @@ Direct _jQuery-like_ selectors:
 
  * `#oneid` is equivalent to `[id='oneid']`.
 
- * `x%oneref` means nodes -not just elements- with name x that match reference _oneref_ according to a specified `DOMSelector.INodeReferenceChecker` implementation.
+ * `x%oneref` means `<x>` tags that have a `th:ref="oneref"` or `th:fragment="oneref"`
+   attribute.
 
- * `%oneref` means nodes -not just elements- with any name that match reference _oneref_ according to a specified `DOMSelector.INodeReferenceChecker` implementation. Note this is actually equivalent to simply `oneref` because references can be used instead of element names.
+ * `%oneref` means any tags that have a `th:ref="oneref"` or `th:fragment="oneref"`
+   attribute. Note this is actually equivalent to simply `oneref` because
+   references can be used instead of element names.
 
  * Direct selectors and attribute selectors can be mixed: `a.external[@href^='https']`.
 -->
@@ -7211,28 +7240,55 @@ Direct _jQuery-like_ selectors:
 
  * `#oneid` は `[id='oneid']` と同等です。
 
- * `x%oneref` は、xという名前を持った -要素だけではなく- ノードの中で、指定された `DOMSelector.INodeReferenceChecker` 実装に従って _oneref_ という参照に一致するもの指します。
+ * `x%oneref` は `<x>` タグの中で `th:ref="oneref"` または `th:fragment="oneref"` 属性を持つものを意味します。
 
- * `%oneref` は、名前に関係なく -要素だけではなく- ノードの中で、指定された `DOMSelector.INodeReferenceChecker` 実装に従って _oneref_ という参照に一致するもの指します。参照は要素名の代わりに使用されるので、実際は単に `oneref` と同等であることに注意してください。
+ * `%oneref` は、タグの種類に関係なく `th:ref="oneref"` または `th:fragment="oneref"` 属性を持つものを意味します。参照は要素名の代わりに使用することができるので、実際のところ単に `oneref` と記述するのと同等であることに留意してください。
 
  * ダイレクトセレクターと属性セレクターは混ぜることができます: `a.external[@href^='https']`.
 
 <!--
-The above DOM Selector expression:
+So the above Markup Selector expression:
 -->
-上記のDOMセレクター式は:
+ということで、前述のマークアップセレクター式は:
 
 ```html
-<div th:include="mytemplate :: [//div[@class='content']]">...</div>
+<div th:insert="mytemplate :: //div[@class='content']">...</div>
 ```
 <!--
-could be written as:
+Could be written as:
 -->
 このように書くことができます:
 
 ```html
-<div th:include="mytemplate :: [div.content]">...</div>
+<div th:insert="mytemplate :: div.content">...</div>
 ```
+
+<!--
+Examining a different example, this:
+-->
+別の例を見てみましょう:
+
+```html
+<div th:replace="mytemplate :: myfrag">...</div>
+```
+
+<!--
+Will look for a `th:fragment="myfrag"` fragment signature (or `th:ref`
+references). But would also look for tags with name `myfrag` if they existed
+(which they don't, in HTML). Note the difference with:
+-->
+これは `th:fragment="myfrag"` フラグメントシグニチャ(または `th:ref` 参照)を探します。また、それと同時に `myfrag` という名前のタグがあるかどうかも探します(HTMLにはそんなタグは存在しませんが)。ですので、次の例との違いに留意してください:
+
+```html
+<div th:replace="mytemplate :: .myfrag">...</div>
+```
+
+<!--
+...which will actually look for any elements with `class="myfrag"`, without
+caring about `th:fragment` signatures (or `th:ref` references). 
+-->
+...こちらは実際に `class="myfrag"` の要素をすべての要素の中から探しますが、 `th:fragment="myfrag"` フラグメントシグニチャ(または `th:ref` 参照)のことは探しません。
+
 
 <!--
 ###Multivalued class matching
@@ -7240,55 +7296,13 @@ could be written as:
 ###複数の値を持つclassのマッチング
 
 <!--
-DOM Selectors understand the class attribute to be **multivalued**, and therefore allow the application of selectors on this attribute even if the element has several class values.
+Markup Selectors understand the class attribute to be **multivalued**, and
+therefore allow the application of selectors on this attribute even if the
+element has several class values.
 -->
-DOMセレクターは **複数の値を持った** class属性に対応しているので、要素がいくつかのclass値を持っている場合でも、セレクターを適用することができます。
+マークアップセレクターは **複数の値を持った** class属性に対応しているので、要素が複数のclass値を持っている場合でも、セレクターを適用することができます。
 
 <!--
-For example, `div[class='two']` will match `<div class="one two three" />`
+For example, `div.two` will match `<div class="one two three" />`
 -->
-例えば、 `div[class='two']` は `<div class="one two three" />` にマッチします。
-
-<!--
-###Optional brackets
--->
-###任意の括弧
-
-<!--
-The syntax of the fragment inclusion attributes converts every fragment selection into a DOM selection, so brackets `[...]` are not needed (though allowed).
--->
-フラグメントインクルード属性の構文は全てのフラグメント選択をDOM選択に変換するので、括弧 `[...]` はなくても大丈夫です(あってもいいですが)。
-
-<!--
-So the following, with no brackets, is equivalent to the bracketed selector seen above:
--->
-なので、次のように括弧を付けなくても、上記の括弧をつけたものと同等になります:
-
-```html
-<div th:include="mytemplate :: div.content">...</div>
-```
-
-<!--
-So, summarizing, this:
--->
-ですので、まとめると:
-
-```html
-<div th:replace="mytemplate :: myfrag">...</div>
-```
-
-<!--
-Will look for a `th:fragment="myfrag"` fragment signature. But would also look for tags with name `myfrag` if they existed (which they don't, in HTML). Note the difference with:
--->
-これは `th:fragment="myfrag"` フラグメントシグネチャを探します。しかし、(HTMLには存在しませんが)もし存在するならば `myfrag` という名前のタグも探します。次の違いに気をつけてください:
-
-```html
-<div th:replace="mytemplate :: .myfrag">...</div>
-```
-
-<!--
-which will actually look for any elements with `class="myfrag"`, without caring about `th:fragment` signatures. 
--->
-この場合は実際 `class="myfrag"` の要素を探しますが、 `th:fragment` シグネチャについては気にしません。
-
-
+例えば、 `div.two` は `<div class="one two three" />` にマッチします。
