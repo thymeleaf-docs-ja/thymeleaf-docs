@@ -5768,8 +5768,8 @@ ${#execInfo.templateStack}
 
 /*
  * 「葉」のテンプレートの名前とモードを返します。処理中のイベントがパースされた
- * テンプレートのことです。例えば、このコードがルートテンプレートである"A"ではなく、
- * "B"と呼ばれる別のテンプレートから"A"に対して挿入されているフラグメント上にある場合、
+ * テンプレートのことです。例えば、このコードがルートテンプレート"A"ではなく、
+ * 別のテンプレート"B"から"A"に挿入されたフラグメント上にある場合、
  * "B"を名前として返し、Bのモードをテンプレートモードして返します。
  */
 ${#execInfo.templateName}
@@ -5777,8 +5777,8 @@ ${#execInfo.templateMode}
 
 /*
  * 「ルート」テンプレートの名前とモードを返します。テンプレートエンジンに渡した
- * 元々のテンプレートのことです。例えば、このコードがルートテンプレートである"A"ではなく、
- * "B"と呼ばれる別のテンプレートから"A"に対して挿入されているフラグメント上にある場合、
+ * 元々のテンプレートのことです。例えば、このコードがルートテンプレート"A"ではなく、
+ * 別のテンプレート"B"から"A"に挿入されたフラグメント上にある場合、
  * "A"を名前として返し、Aのモードをテンプレートモードして返します。
  */
 ${#execInfo.processedTemplateName}
@@ -5963,7 +5963,7 @@ ${#uris.unescapePathSegment(uri)}
 ${#uris.unescapePathSegment(uri, encoding)}
 
 /*
- * フラグメント識別子としてエスケープ/アンエスケープします
+ * フラグメント識別子(#frag)としてエスケープ/アンエスケープします
  */
 ${#uris.escapeFragmentId(uri)}
 ${#uris.escapeFragmentId(uri, encoding)}
@@ -5983,7 +5983,7 @@ ${#uris.unescapeQueryParam(uri, encoding)}
 <!--
 ### Conversions
 -->
-### 変換
+### 型変換
 
 <!--
  * **\#conversions** : utility object that allows the execution of the
@@ -6521,7 +6521,7 @@ ${#numbers.setFormatInteger(numSet,3,'POINT')}
  */
 
 /*
- * 整数の最小桁数と小数桁数を設定します。
+ * 整数部の最小桁数と、小数部の桁数(固定)を設定します。
  * 配列・リスト・セットにも対応しています
  */
 ${#numbers.formatDecimal(num,3,2)}
@@ -6530,7 +6530,7 @@ ${#numbers.listFormatDecimal(numList,3,2)}
 ${#numbers.setFormatDecimal(numSet,3,2)}
 
 /*
- * 整数の最小桁数と小数桁数と小数点の文字を設定します。
+ * 整数部の最小桁数と、小数部の桁数(固定)、小数点の文字を設定します。
  * 配列・リスト・セットにも対応しています
  */
 ${#numbers.formatDecimal(num,3,2,'COMMA')}
@@ -6539,7 +6539,7 @@ ${#numbers.listFormatDecimal(numList,3,2,'COMMA')}
 ${#numbers.setFormatDecimal(numSet,3,2,'COMMA')}
 
 /*
- * 整数の最小桁数と小数桁数と小数点の文字と千の位の区切り文字を設定します。
+ * 整数部の最小桁数と、小数部の桁数(固定)、小数点の文字、千の位の区切り文字を設定します。
  * 配列・リスト・セットにも対応しています
  */
 ${#numbers.formatDecimal(num,3,'POINT',2,'COMMA')}
@@ -6572,7 +6572,7 @@ ${#numbers.listFormatPercent(numList)}
 ${#numbers.setFormatPercent(numSet)}
 
 /* 
- * 整数の最小桁数と、小数桁数を設定します。
+ * 整数部の最小桁数と、小数部の桁数(固定)を設定します。
  */
 ${#numbers.formatPercent(num, 3, 2)}
 ${#numbers.arrayFormatPercent(numArray, 3, 2)}
@@ -6785,7 +6785,7 @@ ${#strings.startsWith(name,'Don')}                  // also array*, list* and se
 ${#strings.endsWith(name,endingFragment)}           // also array*, list* and set*
 
 /*
- * 部分文字列関係
+ * 部分文字列関連の処理
  * 配列・リスト・セットにも対応しています
  */
 ${#strings.indexOf(name,frag)}                      // also array*, list* and set*
@@ -6795,7 +6795,7 @@ ${#strings.substringBefore(name,suffix)}            // also array*, list* and se
 ${#strings.replace(name,'las','ler')}               // also array*, list* and set*
 
 /*
- * appendとprepend
+ * 先頭への追加と末尾への追加
  * 配列・リスト・セットにも対応しています
  */
 ${#strings.prepend(str,prefix)}                     // also array*, list* and set*
@@ -6809,7 +6809,7 @@ ${#strings.toUpperCase(name)}                       // also array*, list* and se
 ${#strings.toLowerCase(name)}                       // also array*, list* and set*
 
 /*
- * splitとjoin
+ * 分割と結合
  */
 ${#strings.arrayJoin(namesArray,',')}
 ${#strings.listJoin(namesList,',')}
@@ -6819,7 +6819,7 @@ ${#strings.listSplit(namesStr,',')}                 // returns List<String>
 ${#strings.setSplit(namesStr,',')}                  // returns Set<String>
 
 /*
- * trim
+ * 先頭と末尾から空白を除去
  * 配列・リスト・セットにも対応しています
  */
 ${#strings.trim(str)}                               // also array*, list* and set*
