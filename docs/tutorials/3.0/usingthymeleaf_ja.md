@@ -5698,8 +5698,329 @@ Thymeleafでは、SpringELによってSpringアプリケーションコンテキ
 
 
 
-18 Appendix B: Expression Utility Objects
+19 Appendix B: Expression Utility Objects
 =========================================
+
+
+<!--
+### Execution Info
+-->
+### 実行情報
+
+<!--
+ * **\#execInfo** : expression object providing useful information about the
+   template being processed inside Thymeleaf Standard Expressions.
+-->
+ * **\#execInfo** : Thymeleafスタンダード式内で処理されているテンプレートについての有用な情報を提供する式オブジェクトです。
+
+<!--
+```java
+/*
+ * ======================================================================
+ * See javadoc API for class org.thymeleaf.expression.ExecutionInfo
+ * ======================================================================
+ */
+
+/*
+ * Return the name and mode of the 'leaf' template. This means the template
+ * from where the events being processed were parsed. So if this piece of
+ * code is not in the root template "A" but on a fragment being inserted
+ * into "A" from another template called "B", this will return "B" as a
+ * name, and B's mode as template mode.
+ */
+${#execInfo.templateName}
+${#execInfo.templateMode}
+
+/*
+ * Return the name and mode of the 'root' template. This means the template
+ * that the template engine was originally asked to process. So if this
+ * piece of code is not in the root template "A" but on a fragment being
+ * inserted into "A" from another template called "B", this will still 
+ * return "A" and A's template mode.
+ */
+${#execInfo.processedTemplateName}
+${#execInfo.processedTemplateMode}
+
+/*
+ * Return the stacks (actually, List<String> or List<TemplateMode>) of
+ * templates being processed. The first element will be the 
+ * 'processedTemplate' (the root one), the last one will be the 'leaf'
+ * template, and in the middle all the fragments inserted in nested
+ * manner to reach the leaf from the root will appear.
+ */
+${#execInfo.templateNames}
+${#execInfo.templateModes}
+
+/*
+ * Return the stack of templates being processed similarly (and in the
+ * same order) to 'templateNames' and 'templateModes', but returning
+ * a List<TemplateData> with the full template metadata.
+ */
+${#execInfo.templateStack}
+```
+-->
+```java
+/*
+ * ======================================================================
+ * See javadoc API for class org.thymeleaf.expression.ExecutionInfo
+ * ======================================================================
+ */
+
+/*
+ * 「葉」のテンプレートの名前とモードを返します。処理中のイベントがパースされた
+ * テンプレートのことです。例えば、このコードがルートテンプレート"A"ではなく、
+ * 別のテンプレート"B"から"A"に挿入されたフラグメント上にある場合、
+ * "B"を名前として返し、Bのモードをテンプレートモードして返します。
+ */
+${#execInfo.templateName}
+${#execInfo.templateMode}
+
+/*
+ * 「ルート」テンプレートの名前とモードを返します。テンプレートエンジンに渡した
+ * 元々のテンプレートのことです。例えば、このコードがルートテンプレート"A"ではなく、
+ * 別のテンプレート"B"から"A"に挿入されたフラグメント上にある場合、
+ * "A"を名前として返し、Aのモードをテンプレートモードして返します。
+ */
+${#execInfo.processedTemplateName}
+${#execInfo.processedTemplateMode}
+
+/*
+ * 処理中のテンプレートのスタック(実際はList<String>またはList<TemplateMode>)
+ * を返します。最初の要素は'processedTemplate'(ルートテンプレート)、最後の要素は
+ * 「葉」のテンプレートになり、その間はルートから葉に至るまでに入れ子になって挿入され
+ * ている全てのフラグメントになります。
+ */
+${#execInfo.templateNames}
+${#execInfo.templateModes}
+
+/*
+ * 処理中のテンプレートのスタックを'templateNames'や'templateModes'と
+ * 同じような処理で(そして同じ順番で)返しますが、返す内容は
+ * テンプレートのメタデータ全てを保持するList<TemplateData>になります。
+ */
+${#execInfo.templateStack}
+```
+
+
+<!--
+### Messages
+-->
+### メッセージ
+
+<!--
+ * **\#messages** : utility methods for obtaining externalized messages inside
+   variables expressions, in the same way as they would be obtained using `#{...}`
+   syntax.
+-->
+ * **\#messages** : 変数式の中で外部化メッセージを取得するためのユーティリティメソッド群。 `#{...}` 構文を使用して取得するのと同じです。
+
+<!--
+```java
+/*
+ * ======================================================================
+ * See javadoc API for class org.thymeleaf.expression.Messages
+ * ======================================================================
+ */
+
+/*
+ * Obtain externalized messages. Can receive a single key, a key plus arguments,
+ * or an array/list/set of keys (in which case it will return an array/list/set of 
+ * externalized messages).
+ * If a message is not found, a default message (like '??msgKey??') is returned.
+ */
+${#messages.msg('msgKey')}
+${#messages.msg('msgKey', param1)}
+${#messages.msg('msgKey', param1, param2)}
+${#messages.msg('msgKey', param1, param2, param3)}
+${#messages.msgWithParams('msgKey', new Object[] {param1, param2, param3, param4})}
+${#messages.arrayMsg(messageKeyArray)}
+${#messages.listMsg(messageKeyList)}
+${#messages.setMsg(messageKeySet)}
+
+/*
+ * Obtain externalized messages or null. Null is returned instead of a default
+ * message if a message for the specified key is not found.
+ */
+${#messages.msgOrNull('msgKey')}
+${#messages.msgOrNull('msgKey', param1)}
+${#messages.msgOrNull('msgKey', param1, param2)}
+${#messages.msgOrNull('msgKey', param1, param2, param3)}
+${#messages.msgOrNullWithParams('msgKey', new Object[] {param1, param2, param3, param4})}
+${#messages.arrayMsgOrNull(messageKeyArray)}
+${#messages.listMsgOrNull(messageKeyList)}
+${#messages.setMsgOrNull(messageKeySet)}
+```
+-->
+```java
+/*
+ * ======================================================================
+ * See javadoc API for class org.thymeleaf.expression.Messages
+ * ======================================================================
+ */
+
+/*
+ * 外部化メッセージを取得します。単一のキー、単一のキーと引数、キーの配列/リスト/セット
+ * (この場合は外部化メッセージの配列/リスト/セットを返します)を渡すことができます。
+ * メッセージが見つからない場合は、デフォルトメッセージ('??msgKey??'など)を返します。
+ */
+${#messages.msg('msgKey')}
+${#messages.msg('msgKey', param1)}
+${#messages.msg('msgKey', param1, param2)}
+${#messages.msg('msgKey', param1, param2, param3)}
+${#messages.msgWithParams('msgKey', new Object[] {param1, param2, param3, param4})}
+${#messages.arrayMsg(messageKeyArray)}
+${#messages.listMsg(messageKeyList)}
+${#messages.setMsg(messageKeySet)}
+
+/*
+ * 外部化メッセージまたはnullを取得します。指定されたキーに対するメッセージが
+ * 見つからない場合はデフォルトメッセージの代わりにnullを返します。
+ */
+${#messages.msgOrNull('msgKey')}
+${#messages.msgOrNull('msgKey', param1)}
+${#messages.msgOrNull('msgKey', param1, param2)}
+${#messages.msgOrNull('msgKey', param1, param2, param3)}
+${#messages.msgOrNullWithParams('msgKey', new Object[] {param1, param2, param3, param4})}
+${#messages.arrayMsgOrNull(messageKeyArray)}
+${#messages.listMsgOrNull(messageKeyList)}
+${#messages.setMsgOrNull(messageKeySet)}
+```
+
+
+<!--
+### URIs/URLs
+-->
+### URI/URL
+
+<!--
+ * **\#uris** : utility object for performing URI/URL operations (esp.
+   escaping/unescaping) inside Thymeleaf Standard Expressions.
+-->
+ * **\#uris** : Thymeleafスタンダード式内でURI/URLの操作(主に、エスケープ/アンエスケープ)を行うユーティリティオブジェクトです。
+
+<!--
+```java
+/*
+ * ======================================================================
+ * See javadoc API for class org.thymeleaf.expression.Uris
+ * ======================================================================
+ */
+
+/*
+ * Escape/Unescape as a URI/URL path
+ */
+${#uris.escapePath(uri)}
+${#uris.escapePath(uri, encoding)}
+${#uris.unescapePath(uri)}
+${#uris.unescapePath(uri, encoding)}
+
+/*
+ * Escape/Unescape as a URI/URL path segment (between '/' symbols)
+ */
+${#uris.escapePathSegment(uri)}
+${#uris.escapePathSegment(uri, encoding)}
+${#uris.unescapePathSegment(uri)}
+${#uris.unescapePathSegment(uri, encoding)}
+
+/*
+ * Escape/Unescape as a Fragment Identifier (#frag)
+ */
+${#uris.escapeFragmentId(uri)}
+${#uris.escapeFragmentId(uri, encoding)}
+${#uris.unescapeFragmentId(uri)}
+${#uris.unescapeFragmentId(uri, encoding)}
+
+/*
+ * Escape/Unescape as a Query Parameter (?var=value)
+ */
+${#uris.escapeQueryParam(uri)}
+${#uris.escapeQueryParam(uri, encoding)}
+${#uris.unescapeQueryParam(uri)}
+${#uris.unescapeQueryParam(uri, encoding)}
+```
+-->
+```java
+/*
+ * ======================================================================
+ * See javadoc API for class org.thymeleaf.expression.Uris
+ * ======================================================================
+ */
+
+/*
+ * URI/URLパスとしてエスケープ/アンエスケープします
+ */
+${#uris.escapePath(uri)}
+${#uris.escapePath(uri, encoding)}
+${#uris.unescapePath(uri)}
+${#uris.unescapePath(uri, encoding)}
+
+/*
+ * URI/URLパスセグメント('/'シンボルの間)としてエスケープ/アンエスケープします
+ */
+${#uris.escapePathSegment(uri)}
+${#uris.escapePathSegment(uri, encoding)}
+${#uris.unescapePathSegment(uri)}
+${#uris.unescapePathSegment(uri, encoding)}
+
+/*
+ * フラグメント識別子(#frag)としてエスケープ/アンエスケープします
+ */
+${#uris.escapeFragmentId(uri)}
+${#uris.escapeFragmentId(uri, encoding)}
+${#uris.unescapeFragmentId(uri)}
+${#uris.unescapeFragmentId(uri, encoding)}
+
+/*
+ * クエリパラメータ(?var=value)としてエスケープ/アンエスケープします
+ */
+${#uris.escapeQueryParam(uri)}
+${#uris.escapeQueryParam(uri, encoding)}
+${#uris.unescapeQueryParam(uri)}
+${#uris.unescapeQueryParam(uri, encoding)}
+```
+
+
+<!--
+### Conversions
+-->
+### 型変換
+
+<!--
+ * **\#conversions** : utility object that allows the execution of the
+   *Conversion Service* at any point of a template:
+-->
+ * **\#conversions** : 「コンバージョンサービス」をテンプレートのどこでも実行できるユーティリティオブジェクト:
+
+<!--
+```java
+/*
+ * ======================================================================
+ * See javadoc API for class org.thymeleaf.expression.Conversions
+ * ======================================================================
+ */
+
+/*
+ * Execute the desired conversion of the 'object' value into the
+ * specified class.
+ */
+${#conversions.convert(object, 'java.util.TimeZone')}
+${#conversions.convert(object, targetClass)}
+```
+-->
+```java
+/*
+ * ======================================================================
+ * See javadoc API for class org.thymeleaf.expression.Conversions
+ * ======================================================================
+ */
+
+/*
+ * 'object'値を指定されたクラスへ変換します。
+ */
+${#conversions.convert(object, 'java.util.TimeZone')}
+${#conversions.convert(object, targetClass)}
+```
+
 
 <!--
 ### Dates
@@ -5776,10 +6097,14 @@ ${#dates.create(year,month,day,hour,minute,second,millisecond)}
  */
 ${#dates.createNow()}
 
+${#dates.createNowForTimeZone()}
+
 /*
  * Create a date (java.util.Date) object for the current date (time set to 00:00)
  */
 ${#dates.createToday()}
+
+${#dates.createTodayForTimeZone()}
 ```
 -->
 ```java
@@ -5791,7 +6116,7 @@ ${#dates.createToday()}
 
 /*
  * 標準ロケールフォーマットで日付をフォーマットします
- * 配列、リスト、セットにも対応しています
+ * 配列・リスト・セットにも対応しています
  */
 ${#dates.format(date)}
 ${#dates.arrayFormat(datesArray)}
@@ -5800,7 +6125,7 @@ ${#dates.setFormat(datesSet)}
 
 /*
  * ISO8601フォーマットで日付をフォーマットします
- * 配列、リスト、セットにも対応しています
+ * 配列・リスト・セットにも対応しています
  */
 ${#dates.formatISO(date)}
 ${#dates.arrayFormatISO(datesArray)}
@@ -5809,7 +6134,7 @@ ${#dates.setFormatISO(datesSet)}
 
 /*
  * 指定されたパターンで日付をフォーマットします
- * 配列、リスト、セットにも対応しています
+ * 配列・リスト・セットにも対応しています
  */
 ${#dates.format(date, 'dd/MMM/yyyy HH:mm')}
 ${#dates.arrayFormat(datesArray, 'dd/MMM/yyyy HH:mm')}
@@ -5818,7 +6143,7 @@ ${#dates.setFormat(datesSet, 'dd/MMM/yyyy HH:mm')}
 
 /*
  * 日付のプロパティを取得します
- * 配列、リスト、セットにも対応しています
+ * 配列・リスト・セットにも対応しています
  */
 ${#dates.day(date)}                    // also arrayDay(...), listDay(...), etc.
 ${#dates.month(date)}                  // also arrayMonth(...), listMonth(...), etc.
@@ -5846,10 +6171,15 @@ ${#dates.create(year,month,day,hour,minute,second,millisecond)}
  */
 ${#dates.createNow()}
 
+${#dates.createNowForTimeZone()}
+
 /*
- * 現在日の日付のオブジェクト(java.util.Date)を作成します(時間は00:00に設定されます)
+ * 現在日の日付のオブジェクト(java.util.Date)を作成します
+ * (時間は00:00に設定されます)
  */
 ${#dates.createToday()}
+
+${#dates.createTodayForTimeZone()}
 ```
 
 
@@ -5923,15 +6253,24 @@ ${#calendars.create(year,month,day,hour,minute)}
 ${#calendars.create(year,month,day,hour,minute,second)}
 ${#calendars.create(year,month,day,hour,minute,second,millisecond)}
 
+${#calendars.createForTimeZone(year,month,day,timeZone)}
+${#calendars.createForTimeZone(year,month,day,hour,minute,timeZone)}
+${#calendars.createForTimeZone(year,month,day,hour,minute,second,timeZone)}
+${#calendars.createForTimeZone(year,month,day,hour,minute,second,millisecond,timeZone)}
+
 /*
  * Create a calendar (java.util.Calendar) object for the current date and time
  */
 ${#calendars.createNow()}
 
+${#calendars.createNowForTimeZone()}
+
 /*
  * Create a calendar (java.util.Calendar) object for the current date (time set to 00:00)
  */
 ${#calendars.createToday()}
+
+${#calendars.createTodayForTimeZone()}
 ```
 -->
 ```java
@@ -5943,7 +6282,7 @@ ${#calendars.createToday()}
 
 /*
  * 標準ロケールフォーマットでカレンダーをフォーマットします
- * 配列、リスト、セットにも対応しています
+ * 配列・リスト・セットにも対応しています
  */
 ${#calendars.format(cal)}
 ${#calendars.arrayFormat(calArray)}
@@ -5952,7 +6291,7 @@ ${#calendars.setFormat(calSet)}
 
 /*
  * ISO8601フォーマットでカレンダーをフォーマットします
- * 配列、リスト、セットにも対応しています
+ * 配列・リスト・セットにも対応しています
  */
 ${#calendars.formatISO(cal)}
 ${#calendars.arrayFormatISO(calArray)}
@@ -5961,7 +6300,7 @@ ${#calendars.setFormatISO(calSet)}
 
 /*
  * 指定されたパターンでカレンダーをフォーマットします
- * 配列、リスト、セットにも対応しています
+ * 配列・リスト・セットにも対応しています
  */
 ${#calendars.format(cal, 'dd/MMM/yyyy HH:mm')}
 ${#calendars.arrayFormat(calArray, 'dd/MMM/yyyy HH:mm')}
@@ -5970,7 +6309,7 @@ ${#calendars.setFormat(calSet, 'dd/MMM/yyyy HH:mm')}
 
 /*
  * カレンダーのプロパティを取得します
- * 配列、リスト、セットにも対応しています
+ * 配列・リスト・セットにも対応しています
  */
 ${#calendars.day(date)}                // also arrayDay(...), listDay(...), etc.
 ${#calendars.month(date)}              // also arrayMonth(...), listMonth(...), etc.
@@ -5993,16 +6332,27 @@ ${#calendars.create(year,month,day,hour,minute)}
 ${#calendars.create(year,month,day,hour,minute,second)}
 ${#calendars.create(year,month,day,hour,minute,second,millisecond)}
 
+${#calendars.createForTimeZone(year,month,day,timeZone)}
+${#calendars.createForTimeZone(year,month,day,hour,minute,timeZone)}
+${#calendars.createForTimeZone(year,month,day,hour,minute,second,timeZone)}
+${#calendars.createForTimeZone(year,month,day,hour,minute,second,millisecond,timeZone)}
+
 /*
  * 現在日時のカレンダーオブジェクト(java.util.Calendar)を作成します
  */
 ${#calendars.createNow()}
 
+${#calendars.createNowForTimeZone()}
+
 /*
- * 現在日のカレンダーのオブジェクト(java.util.Calendar)を作成します(時間は00:00に設定されます)
+ * 現在日のカレンダーのオブジェクト(java.util.Calendar)を作成します
+ * (時間は00:00に設定されます)
  */
 ${#calendars.createToday()}
+
+${#calendars.createTodayForTimeZone()}
 ```
+
 
 <!--
 ### Numbers
@@ -6084,11 +6434,42 @@ ${#numbers.listFormatDecimal(numList,3,'POINT',2,'COMMA')}
 ${#numbers.setFormatDecimal(numSet,3,'POINT',2,'COMMA')}
 
 
+/* 
+ * =====================
+ * Formatting currencies
+ * =====================
+ */
+
+${#numbers.formatCurrency(num)}
+${#numbers.arrayFormatCurrency(numArray)}
+${#numbers.listFormatCurrency(numList)}
+${#numbers.setFormatCurrency(numSet)}
+
+
+/* 
+ * ======================
+ * Formatting percentages
+ * ======================
+ */
+
+${#numbers.formatPercent(num)}
+${#numbers.arrayFormatPercent(numArray)}
+${#numbers.listFormatPercent(numList)}
+${#numbers.setFormatPercent(numSet)}
+
+/* 
+ * Set minimum integer digits and (exact) decimal digits.
+ */
+${#numbers.formatPercent(num, 3, 2)}
+${#numbers.arrayFormatPercent(numArray, 3, 2)}
+${#numbers.listFormatPercent(numList, 3, 2)}
+${#numbers.setFormatPercent(numSet, 3, 2)}
+
 
 /*
- * ==========================
+ * ===============
  * Utility methods
- * ==========================
+ * ===============
  */
 
 /*
@@ -6114,7 +6495,7 @@ ${#numbers.sequence(from,to,step)}
 
 /* 
  * 整数の最小桁数を設定します。
- * 配列、リスト、セットにも対応しています
+ * 配列・リスト・セットにも対応しています
  */
 ${#numbers.formatInteger(num,3)}
 ${#numbers.arrayFormatInteger(numArray,3)}
@@ -6124,8 +6505,8 @@ ${#numbers.setFormatInteger(numSet,3)}
 
 /* 
  * 整数の最小桁数と千の位の区切り文字を設定します:
- * 'POINT', 'COMMA', 'WHITESPACE', 'NONE' または 'DEFAULT' (ロケールに依存)。
- * 配列、リスト、セットにも対応しています
+ * 'POINT','COMMA','WHITESPACE','NONE'または'DEFAULT'(ロケールに依存)。
+ * 配列・リスト・セットにも対応しています
  */
 ${#numbers.formatInteger(num,3,'POINT')}
 ${#numbers.arrayFormatInteger(numArray,3,'POINT')}
@@ -6140,8 +6521,8 @@ ${#numbers.setFormatInteger(numSet,3,'POINT')}
  */
 
 /*
- * 整数の最小桁数と小数桁数を設定します。
- * 配列、リスト、セットにも対応しています
+ * 整数部の最小桁数と、小数部の桁数(固定)を設定します。
+ * 配列・リスト・セットにも対応しています
  */
 ${#numbers.formatDecimal(num,3,2)}
 ${#numbers.arrayFormatDecimal(numArray,3,2)}
@@ -6149,8 +6530,8 @@ ${#numbers.listFormatDecimal(numList,3,2)}
 ${#numbers.setFormatDecimal(numSet,3,2)}
 
 /*
- * 整数の最小桁数と小数桁数と小数点の文字を設定します。
- * 配列、リスト、セットにも対応しています
+ * 整数部の最小桁数と、小数部の桁数(固定)、小数点の文字を設定します。
+ * 配列・リスト・セットにも対応しています
  */
 ${#numbers.formatDecimal(num,3,2,'COMMA')}
 ${#numbers.arrayFormatDecimal(numArray,3,2,'COMMA')}
@@ -6158,8 +6539,8 @@ ${#numbers.listFormatDecimal(numList,3,2,'COMMA')}
 ${#numbers.setFormatDecimal(numSet,3,2,'COMMA')}
 
 /*
- * 整数の最小桁数と小数桁数と小数点の文字と千の位の区切り文字を設定します。
- * 配列、リスト、セットにも対応しています
+ * 整数部の最小桁数と、小数部の桁数(固定)、小数点の文字、千の位の区切り文字を設定します。
+ * 配列・リスト・セットにも対応しています
  */
 ${#numbers.formatDecimal(num,3,'POINT',2,'COMMA')}
 ${#numbers.arrayFormatDecimal(numArray,3,'POINT',2,'COMMA')}
@@ -6167,11 +6548,42 @@ ${#numbers.listFormatDecimal(numList,3,'POINT',2,'COMMA')}
 ${#numbers.setFormatDecimal(numSet,3,'POINT',2,'COMMA')}
 
 
+/* 
+ * =====================
+ * 通貨のフォーマット
+ * =====================
+ */
+
+${#numbers.formatCurrency(num)}
+${#numbers.arrayFormatCurrency(numArray)}
+${#numbers.listFormatCurrency(numList)}
+${#numbers.setFormatCurrency(numSet)}
+
+
+/* 
+ * ======================
+ * パーセントのフォーマット
+ * ======================
+ */
+
+${#numbers.formatPercent(num)}
+${#numbers.arrayFormatPercent(numArray)}
+${#numbers.listFormatPercent(numList)}
+${#numbers.setFormatPercent(numSet)}
+
+/* 
+ * 整数部の最小桁数と、小数部の桁数(固定)を設定します。
+ */
+${#numbers.formatPercent(num, 3, 2)}
+${#numbers.arrayFormatPercent(numArray, 3, 2)}
+${#numbers.listFormatPercent(numList, 3, 2)}
+${#numbers.setFormatPercent(numSet, 3, 2)}
+
 
 /*
- * ==========================
+ * ===============
  * ユーティリティメソッド
- * ==========================
+ * ===============
  */
 
 /*
@@ -6180,6 +6592,7 @@ ${#numbers.setFormatDecimal(numSet,3,'POINT',2,'COMMA')}
 ${#numbers.sequence(from,to)}
 ${#numbers.sequence(from,to,step)}
 ```
+
 
 <!--
 ### Strings
@@ -6333,13 +6746,13 @@ ${#strings.randomAlphanumeric(count)}
  */
 
 /*
- * Null安全な toString()
+ * null安全なtoString()
  */
 ${#strings.toString(obj)}                           // array*, list* and set* にも対応しています
 
 /*
- * 文字列が空(またはnull)かどうかをチェックします。チェック前に trim() 処理をします。
- * 配列、リスト、セットにも対応しています
+ * 文字列が空(またはnull)かどうかをチェックします。チェック前にtrim()処理をします。
+ * 配列・リスト・セットにも対応しています
  */
 ${#strings.isEmpty(name)}
 ${#strings.arrayIsEmpty(nameArr)}
@@ -6347,8 +6760,9 @@ ${#strings.listIsEmpty(nameList)}
 ${#strings.setIsEmpty(nameSet)}
 
 /*
- * 'isEmpty()' を実行して false の場合はその文字列を返し、true の場合は指定されたデフォルト文字列を返します
- * 配列、リスト、セットにも対応しています
+ * 'isEmpty()'を実行してfalseの場合はその文字列を返し
+ * trueの場合は指定されたデフォルト文字列を返します
+ * 配列・リスト・セットにも対応しています
  */
 ${#strings.defaultString(text,default)}
 ${#strings.arrayDefaultString(textArr,default)}
@@ -6357,21 +6771,22 @@ ${#strings.setDefaultString(textSet,default)}
 
 /*
  * 文字列にフラグメントが含まれているかどうかをチェックします
- * 配列、リスト、セットにも対応しています
+ * 配列・リスト・セットにも対応しています
  */
 ${#strings.contains(name,'ez')}                     // also array*, list* and set*
 ${#strings.containsIgnoreCase(name,'ez')}           // also array*, list* and set*
 
 /*
- * 文字列が指定されたフラグメントで始まっているかどうかまたは終わっているかどうかをチェックします
- * 配列、リスト、セットにも対応しています
+ * 文字列が指定されたフラグメントで始まっているかどうかまたは
+ * 終わっているかどうかをチェックします
+ * 配列・リスト・セットにも対応しています
  */
 ${#strings.startsWith(name,'Don')}                  // also array*, list* and set*
 ${#strings.endsWith(name,endingFragment)}           // also array*, list* and set*
 
 /*
- * 部分文字列関係
- * 配列、リスト、セットにも対応しています
+ * 部分文字列関連の処理
+ * 配列・リスト・セットにも対応しています
  */
 ${#strings.indexOf(name,frag)}                      // also array*, list* and set*
 ${#strings.substring(name,3,5)}                     // also array*, list* and set*
@@ -6380,21 +6795,21 @@ ${#strings.substringBefore(name,suffix)}            // also array*, list* and se
 ${#strings.replace(name,'las','ler')}               // also array*, list* and set*
 
 /*
- * Append と prepend
- * 配列、リスト、セットにも対応しています
+ * 先頭への追加と末尾への追加
+ * 配列・リスト・セットにも対応しています
  */
 ${#strings.prepend(str,prefix)}                     // also array*, list* and set*
 ${#strings.append(str,suffix)}                      // also array*, list* and set*
 
 /*
  * 大文字小文字変換
- * 配列、リスト、セットにも対応しています
+ * 配列・リスト・セットにも対応しています
  */
 ${#strings.toUpperCase(name)}                       // also array*, list* and set*
 ${#strings.toLowerCase(name)}                       // also array*, list* and set*
 
 /*
- * Split と join
+ * 分割と結合
  */
 ${#strings.arrayJoin(namesArray,',')}
 ${#strings.listJoin(namesList,',')}
@@ -6404,21 +6819,21 @@ ${#strings.listSplit(namesStr,',')}                 // returns List<String>
 ${#strings.setSplit(namesStr,',')}                  // returns Set<String>
 
 /*
- * Trim
- * 配列、リスト、セットにも対応しています
+ * 先頭と末尾から空白を除去
+ * 配列・リスト・セットにも対応しています
  */
 ${#strings.trim(str)}                               // also array*, list* and set*
 
 /*
  * 長さの計算
- * 配列、リスト、セットにも対応しています
+ * 配列・リスト・セットにも対応しています
  */
 ${#strings.length(str)}                             // also array*, list* and set*
 
 /*
  * 与えられたテキストが最大サイズnになるよう省略処理をします。
- * もしテキストがそれよりも大きい場合は、切り取られて最後に "..." がつきます。
- * 配列、リスト、セットにも対応しています
+ * もしテキストがそれよりも大きい場合は、切り取られて最後に"..."がつきます。
+ * 配列・リスト・セットにも対応しています
  */
 ${#strings.abbreviate(str,10)}                      // also array*, list* and set*
 
@@ -6444,7 +6859,7 @@ ${#strings.unescapeJava(str)}                       // also array*, list* and se
 ${#strings.unescapeJavaScript(str)}                 // also array*, list* and set*
 
 /*
- * Null安全な比較と連結
+ * null安全な比較と連結
  */
 ${#strings.equals(first, second)}
 ${#strings.equalsIgnoreCase(first, second)}
@@ -6452,10 +6867,11 @@ ${#strings.concat(values...)}
 ${#strings.concatReplaceNulls(nullValue, values...)}
 
 /*
- * Random
+ * random
  */
 ${#strings.randomAlphanumeric(count)}
 ```
+
 
 <!--
 ### Objects
@@ -6493,14 +6909,15 @@ ${#objects.setNullSafe(objSet,default)}
  */
 
 /*
- * null でなければ obj を、null の場合は指定されたデフォルト値を返します
- * 配列、リスト、セットにも対応しています
+ * nullでなければobjを、nullの場合は指定されたデフォルト値を返します
+ * 配列・リスト・セットにも対応しています
  */
 ${#objects.nullSafe(obj,default)}
 ${#objects.arrayNullSafe(objArray,default)}
 ${#objects.listNullSafe(objList,default)}
 ${#objects.setNullSafe(objSet,default)}
 ```
+
 
 <!--
 ### Booleans
@@ -6564,8 +6981,8 @@ ${#bools.setOr(condSet)}
  */
 
 /*
- * th:if タグと同じように条件を評価します(条件の評価の章を後で参照してください)。
- * 配列、リスト、セットにも対応しています
+ * th:ifタグと同じように条件を評価します(条件の評価の章を後で参照してください)。
+ * 配列・リスト・セットにも対応しています
  */
 ${#bools.isTrue(obj)}
 ${#bools.arrayIsTrue(objArray)}
@@ -6574,7 +6991,7 @@ ${#bools.setIsTrue(objSet)}
 
 /*
  * 否定の評価
- * 配列、リスト、セットにも対応しています
+ * 配列・リスト・セットにも対応しています
  */
 ${#bools.isFalse(cond)}
 ${#bools.arrayIsFalse(condArray)}
@@ -6583,7 +7000,7 @@ ${#bools.setIsFalse(condSet)}
 
 /*
  * 評価してAND演算子を適用
- * 配列、リスト、セットをパラメータとして受け取ります
+ * 配列・リスト・セットをパラメータとして受け取ります
  */
 ${#bools.arrayAnd(condArray)}
 ${#bools.listAnd(condList)}
@@ -6591,12 +7008,13 @@ ${#bools.setAnd(condSet)}
 
 /*
  * 評価してOR演算子を適用
- * 配列、リスト、セットをパラメータとして受け取ります
+ * 配列・リスト・セットをパラメータとして受け取ります
  */
 ${#bools.arrayOr(condArray)}
 ${#bools.listOr(condList)}
 ${#bools.setOr(condSet)}
 ```
+
 
 <!--
 ### Arrays
@@ -6660,7 +7078,7 @@ ${#arrays.containsAll(array, elements)}
 
 /*
  * コンポーネントクラスを推測して配列に変換します。
- * 結果の配列が空もしくは、対象オブジェクトに複数のクラスが含まれる場合 Object[] を変えします。
+ * 結果の配列が空もしくは、対象オブジェクトに複数のクラスが含まれる場合Object[]を返します。
  */
 ${#arrays.toArray(object)}
 
@@ -6690,6 +7108,7 @@ ${#arrays.isEmpty(array)}
 ${#arrays.contains(array, element)}
 ${#arrays.containsAll(array, elements)}
 ```
+
 
 <!--
 ### Lists
@@ -6767,12 +7186,13 @@ ${#lists.contains(list, element)}
 ${#lists.containsAll(list, elements)}
 
 /*
- * 与えられたリストのコピーをソート。リストのメンバーが comparable を実装しているか
- * または comparator が指定されている必要があります。
+ * 与えられたリストのコピーをソート。リストのメンバーがcomparableを実装しているか
+ * またはcomparatorが指定されている必要があります。
  */
 ${#lists.sort(list)}
 ${#lists.sort(list, comparator)}
 ```
+
 
 <!--
 ### Sets
@@ -6843,6 +7263,7 @@ ${#sets.contains(set, element)}
 ${#sets.containsAll(set, elements)}
 ```
 
+
 <!--
 ### Maps
 -->
@@ -6906,6 +7327,7 @@ ${#maps.containsValue(map, value)}
 ${#maps.containsAllValues(map, value)}
 ```
 
+
 <!--
 ### Aggregates
 -->
@@ -6946,101 +7368,16 @@ ${#aggregates.avg(collection)}
  */
 
 /*
- * 合計値を計算。配列またはコレクションが空の場合は null を返します
+ * 合計値を計算。配列またはコレクションが空の場合はnullを返します
  */
 ${#aggregates.sum(array)}
 ${#aggregates.sum(collection)}
 
 /*
- * 平均を計算。配列またはコレクションが空の場合は null を返します
+ * 平均を計算。配列またはコレクションが空の場合はnullを返します
  */
 ${#aggregates.avg(array)}
 ${#aggregates.avg(collection)}
-```
-
-
-<!--
-### Messages
--->
-### メッセージ
-
-<!--
- * **\#messages** : utility methods for obtaining externalized messages inside
-   variables expressions, in the same way as they would be obtained using `#{...}`
-   syntax.
--->
- * **\#messages** : 変数式の中で外部化メッセージを取得するためのユーティリティメソッド群。 `#{...}` 構文を使用して取得するのと同じです。
-
-<!--
-```java
-/*
- * ======================================================================
- * See javadoc API for class org.thymeleaf.expression.Messages
- * ======================================================================
- */
-
-/*
- * Obtain externalized messages. Can receive a single key, a key plus arguments,
- * or an array/list/set of keys (in which case it will return an array/list/set of 
- * externalized messages).
- * If a message is not found, a default message (like '??msgKey??') is returned.
- */
-${#messages.msg('msgKey')}
-${#messages.msg('msgKey', param1)}
-${#messages.msg('msgKey', param1, param2)}
-${#messages.msg('msgKey', param1, param2, param3)}
-${#messages.msgWithParams('msgKey', new Object[] {param1, param2, param3, param4})}
-${#messages.arrayMsg(messageKeyArray)}
-${#messages.listMsg(messageKeyList)}
-${#messages.setMsg(messageKeySet)}
-
-/*
- * Obtain externalized messages or null. Null is returned instead of a default
- * message if a message for the specified key is not found.
- */
-${#messages.msgOrNull('msgKey')}
-${#messages.msgOrNull('msgKey', param1)}
-${#messages.msgOrNull('msgKey', param1, param2)}
-${#messages.msgOrNull('msgKey', param1, param2, param3)}
-${#messages.msgOrNullWithParams('msgKey', new Object[] {param1, param2, param3, param4})}
-${#messages.arrayMsgOrNull(messageKeyArray)}
-${#messages.listMsgOrNull(messageKeyList)}
-${#messages.setMsgOrNull(messageKeySet)}
-```
--->
-```java
-/*
- * ======================================================================
- * See javadoc API for class org.thymeleaf.expression.Messages
- * ======================================================================
- */
-
-/*
- * 外部化メッセージを取得します。単一のキー、単一のキーと引数、
- * キーの配列/リスト/セット(この場合は外部化メッセージの配列/リスト/セットを返します)を渡すことができます。
- * メッセージが見つからない場合は、デフォルトメッセージ( '??msgKey??' など)を返します。
- */
-${#messages.msg('msgKey')}
-${#messages.msg('msgKey', param1)}
-${#messages.msg('msgKey', param1, param2)}
-${#messages.msg('msgKey', param1, param2, param3)}
-${#messages.msgWithParams('msgKey', new Object[] {param1, param2, param3, param4})}
-${#messages.arrayMsg(messageKeyArray)}
-${#messages.listMsg(messageKeyList)}
-${#messages.setMsg(messageKeySet)}
-
-/*
- * 外部化メッセージまたは null を取得します。指定されたキーに対するメッセージが見つからない場合に
- * デフォルトメッセージの代わりに null を返します。
- */
-${#messages.msgOrNull('msgKey')}
-${#messages.msgOrNull('msgKey', param1)}
-${#messages.msgOrNull('msgKey', param1, param2)}
-${#messages.msgOrNull('msgKey', param1, param2, param3)}
-${#messages.msgOrNullWithParams('msgKey', new Object[] {param1, param2, param3, param4})}
-${#messages.arrayMsgOrNull(messageKeyArray)}
-${#messages.listMsgOrNull(messageKeyList)}
-${#messages.setMsgOrNull(messageKeySet)}
 ```
 
 
@@ -7090,17 +7427,17 @@ ${#ids.prev('someId')}
  */
 
 /*
- * 通常は th:id 属性に使用されます。
+ * 通常は th:id属性に使用されます。
  * id属性値にカウンターの値を加えるので、繰り返し処理の中でもユニークな値を持つことができます。
  */
 ${#ids.seq('someId')}
 
 /*
- * 通常は <label> タグの中の th:for 属性に使用されます。
- * #ids.seq(...) 関数で生成されたidをラベルから参照することができます。
+ * 通常は<label>タグの中のth:for属性に使用されます。
+ * #ids.seq(...)関数で生成されたidをラベルから参照することができます。
  *
- * <label> が #ids.seq(...) 関数を持った要素の前にあるか後ろにあるかによって、
- * "next" (ラベルが"seq"の前の場合) または "prev" (ラベルが"seq"の後の場合) 関数を呼び出します。
+ * <label>が#ids.seq(...)関数を持った要素の前にあるか後ろにあるかによって、
+ * "next"(ラベルが"seq"の前の場合)または"prev"(ラベルが"seq"の後の場合)関数を呼び出します。
  */
 ${#ids.next('someId')}
 ${#ids.prev('someId')}
