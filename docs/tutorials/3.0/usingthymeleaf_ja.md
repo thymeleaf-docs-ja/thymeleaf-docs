@@ -9,11 +9,15 @@ translator: 'Mitsuyuki Shiiba (<a href="https://twitter.com/bufferings">@bufferi
 ---
 
 
+
+
 <!--
 1 Introducing Thymeleaf
 -->
 1 Thymeleafの紹介
 =======================
+
+
 
 <!--
 1.1 What is Thymeleaf?
@@ -22,39 +26,29 @@ translator: 'Mitsuyuki Shiiba (<a href="https://twitter.com/bufferings">@bufferi
 ----------------------
 
 <!--
-Thymeleaf is a Java library. It is an XML/XHTML/HTML5 template engine able to
-apply a set of transformations to template files in order to display data and/or
-text produced by your applications.
+Thymeleaf is a modern server-side Java template engine for both web and
+standalone environments, capable of processing HTML, XML, JavaScript, CSS and
+even plain text.
 -->
-ThymeleafはJavaのテンプレートエンジンライブラリです。XML/XHTML/HTML5で書かれたテンプレートを変換して、アプリケーションのデータやテキストを表示することができます。
+Thymeleafは、ウェブ・スタンドアローンどちらの環境でも使える、モダンなサーバーサイドJavaテンプレートエンジンです。HTML、XML、JavaScript、CSS、そしてプレーンテキストでさえも処理することができます。
 
 <!--
-It is better suited for serving XHTML/HTML5 in web applications, but it can
-process any XML file, be it in web or in standalone applications.
+The main goal of Thymeleaf is to provide an elegant and highly-maintainable way
+of creating templates. To achieve this, it builds on the concept of *Natural
+Templates* to inject its logic into template files in a way that doesn't affect
+the template from being used as a design prototype. This improves communication
+of design and bridges the gap between design and development teams.
 -->
-ウェブアプリケーション内のXHTML/HTML5を扱う方が得意ですが、どんなXMLファイルでも処理できますし、ウェブアプリケーションでもスタンドアローンアプリケーションでも使用可能です。
+Thymeleafのメインゴールは、優雅で保守性の高いテンプレート作成方法を提供することです。これを実現するために「ナチュラルテンプレート」というコンセプトを採用しており、デザインプロトタイプとして使用されているテンプレートに影響することなく、ロジックを注入することが可能です。これによってデザインのコミュニケーションが改善され、デザインチームと開発チームの溝を埋めることができます。
 
 <!--
-The main goal of Thymeleaf is to provide an elegant and well-formed way of
-creating templates. In order to achieve this, it is based on XML tags and
-attributes that define the execution of predefined logic on the _DOM (Document Object Model)_,
-instead of explicitly writing that logic as code inside the template.
--->
-Thymeleafのメインゴールは、テンプレート作成のための優雅で整形式の方法を提供することです。そのため、テンプレート内にロジックを記述する方法ではなく、事前定義されたロジックの実行を _DOM(Document Object Model)_ 上でXMLタグ・属性によって指定する方法を基本としています。
-
-<!--
-Its architecture allows a fast processing of templates, relying on intelligent
-caching of parsed files in order to use the least possible amount of I/O
-operations during execution.
--->
-このアーキテクチャのおかげで、パースしたファイルを賢くキャッシュして実行時のI/O処理を最小限に抑えることができるので、テンプレートを高速に処理することが可能となっています。
-
-<!--
-And last but not least, Thymeleaf has been designed from the beginning with XML
-and Web standards in mind, allowing you to create fully validating templates if
+Thymeleaf has also been designed from the beginning with Web Standards in mind
+-- especially **HTML5** -- allowing you to create fully validating templates if
 that is a need for you.
 -->
-さらに、Thymeleafは最初からXMLとウェブ標準を念頭に置いてデザインされているので、必要に応じて完全にバリデーションされた状態のテンプレートを作成することもできます。
+また、Thymeleafは当初からウェブ標準 -- 特に **HTML5** -- を念頭に置いて設計されているので、もし必要であれば完全にバリデーションされたテンプレートを作成することも可能です。
+
+
 
 <!--
 1.2 What kind of templates can Thymeleaf process?
@@ -64,43 +58,75 @@ that is a need for you.
 
 <!--
 Out-of-the-box, Thymeleaf allows you to process six kinds of templates, each of
-which is called a Template Mode:
+which is called a **Template Mode**:
 -->
-Thymeleafは6種類のテンプレートを処理することができます。これをテンプレートモードと呼びます:
+Thymeleafは6種類のテンプレートを処理することができます。これを **テンプレートモード** と呼びます:
 
+ * HTML
  * XML
- * Valid XML
- * XHTML
- * Valid XHTML
- * HTML5
- * Legacy HTML5
+ * TEXT
+ * JAVASCRIPT
+ * CSS
+ * RAW
+
+<!-- 
+There are two *markup* template modes (`HTML` and `XML`), three *textual* template 
+modes (`TEXT`, `JAVASCRIPT` and `CSS`) and a *no-op* template mode (`RAW`).
+-->
+2種類の「マークアップ」テンプレートモード( `HTML` と `XML` )、3種類の「テキスト形式の」テンプレートモード( `TEXT` 、 `JAVASCRIPT` 、 `CSS` )、1種類の「処理しない」テンプレートモード( `RAW` )があります。
 
 <!--
-All of these modes refer to well-formed XML files except the _Legacy HTML5_ mode,
-which allows you to process HTML5 files with features such as standalone (not
-closed) tags, tag attributes without a value or not written between quotes. In
-order to process files in this specific mode, Thymeleaf will first perform a
-transformation that will convert your files to well-formed XML files which are
-still perfectly valid HTML5 (and are in fact the recommended way to create HTML5
-code)^[Given the fact that XHTML5 is just XML-formed HTML5 served with the
-application/xhtml+xml content type, we could also say that Thymeleaf supports
-XHTML5.].
+The **`HTML`** template mode will allow any kind of HTML input, including HTML5,
+HTML 4 and XHTML. No validation or well-formedness check will be performed, and
+template code/structure will be respected to the biggest possible extent in
+output.
 -->
-_Legacy HTML5_ 以外は整形式XMLです。_Legacy HTML5_ モードでは閉じていないタグ・値がない属性・引用符で囲まれていない属性が許容されていますが、Thymeleafはこのモードのファイルを最初に整形式XMLに変換します。それでもHTML5としては正しい状態です(そして実際こちらがHTML5を書くのに推奨されている方法です) ^[application/xhtml+xmlコンテンツタイプで取り扱われるXML整形式のHTML5はXHTML5と呼ばれるので、ThymeleafはXHTML5をサポートしていると言ってもいいかもしれません。]。
+**`HTML`** テンプレートモードでは、HTML5、HTML 4、そしてXHTMLを含む、全ての種類のHTML入力を受け付けます。バリデーションや整形式チェックは行われず、テンプレートのコード/構造は、可能な限り尊重されて出力に反映されます。
 
 <!--
-Also note that validation is only available for XML and XHTML templates.
+The **`XML`** template mode will allow XML input. In this case, code is expected
+to be well-formed -- no unclosed tags, no unquoted attributes, etc -- and
+the parser will throw exceptions if well-formedness violations are found. Note
+that no *validation* (against a DTD or XML Schema) will be performed.
 -->
-また、バリデーションはXMLとXHTMLのみで使用可能なことに注意してください。
+**`XML`** テンプレートモードでは、XML入力を受け付けます。この場合、コードは整形式であること -- 閉じられていないタグが無いこと、クォートされていない属性が無いことなど -- が求められ、整形式違反があった場合はパーサーが例外を投げます。DTDやXMLスキーマに対する「バリデーション」は行われないことに注意してください。
 
 <!--
-Nevertheless, these are not the only types of template that Thymeleaf can
-process, and the user is always able to define his/her own mode by specifying
-both a way to _parse_ templates in this mode and a way to _write_ the results.
-This way, anything that can be modelled as a DOM tree (be it XML or not) could
-effectively be processed as a template by Thymeleaf.
+The **`TEXT`** template mode will allow the use of a special syntax for
+templates of a non-markup nature. Examples of such templates might be text
+emails or templated documentation. Note that HTML or XML templates can be also
+processed as `TEXT`, in which case they will not be parsed as markup, and every
+tag, DOCTYPE, comment, etc, will be treated as mere text.
 -->
-ただ、Thymeleafが処理できるテンプレートのタイプはこれだけではありません。テンプレートを「パースする方法」と結果を「書き込む方法」を指定することで、ユーザーは独自のモードを定義することができます。Thymeleafは、DOMツリーとして表現することができるものであれば何でも(XMLかどうかに関係なく)テンプレートとして効率よく処理することができます。
+**`TEXT`** テンプレートモードでは、マークアップ形式ではないテンプレートに対して特別な構文を使用することができます。そのようなテンプレートの例としては、テキストEメールやテンプレート化されたドキュメンテーションなどがあるでしょう。HTMLやXMLのテンプレートを `TEXT` として処理できることも覚えておいてください。この場合、マークアップとしてパースされずに、全てのタグやDOCTYPE、コメントなどは、単なるテキストとして扱われます。
+
+<!--
+The **`JAVASCRIPT`** template mode will allow the processing of JavaScript files
+in a Thymeleaf application. This means being able to use model data inside
+JavaScript files in the same way it can be done in HTML files, but with
+JavaScript-specific integrations such as specialized escaping or *natural
+scripting*. The `JAVASCRIPT` template mode is considered a *textual* mode
+and therefore uses the same special syntax as the `TEXT` template mode.
+-->
+**`JAVASCRIPT`** テンプレートモードでは、Thymeleafアプリケーション内のJavaScriptファイルを処理することができます。つまりHTMLファイルと同様に、JavaScriptファイル内でもモデルデータを使用できるということです。また、特別なエスケープや「ナチュラルスクリプティング」などのJavaScript固有の機能もあります。 **`JAVASCRIPT`** テンプレートモードは「テキスト形式の」モードとして考えられるので、 `TEXT` テンプレートモードと同じ特別な構文を使用します。
+
+<!--
+The **`CSS`** template mode will allow the processing of CSS files involved in a
+Thymeleaf application. Similar to the `JAVASCRIPT` mode, the `CSS` template mode
+is also a *textual* mode and uses the special processing syntax from the `TEXT`
+template mode.
+-->
+**`CSS`** テンプレートモードでは、Thymeleafアプリケーションに含まれているCSSファイルを処理することができます。 `JAVASCRIPT` モードと同様に `CSS` テンプレートモードも「テキスト形式の」モードなので、 `TEXT` テンプレートモードの特別な処理構文を利用します。
+
+<!--
+The **`RAW`** template mode will simply not process templates at all. It is meant
+to be used for inserting untouched resources (files, URL responses, etc.) into
+the templates being processed. For example, external, uncontrolled resources in
+HTML format could be included into application templates, safely knowing that
+any Thymeleaf code that these resources might include will not be executed.
+-->
+**`RAW`** テンプレートモードでは、単純にテンプレートに対して何も処理をしません。これは、処理中のテンプレートに対して、(ファイルやURLレスポンスなどの)リソースを変更せずにそのまま挿入する際に使用されます。例えば、外部にあって自分達の管理下にないHTML形式のリソースを、アプリケーションのテンプレートにインクルードする場合を考えます。この時、外部リソースにThymeleafのコードが含まれていたとしても、そのコードは実行されないことが分かっているので安心です。
+
 
 
 <!--
@@ -110,64 +136,63 @@ effectively be processed as a template by Thymeleaf.
 ----------------------------------
 
 <!--
-Thymeleaf is an extremely extensible template engine (in fact it should be
-better called a _template engine framework_) that allows you to completely
-define the DOM nodes that will be processed in your templates and also how they
-will be processed.
+Thymeleaf is an extremely extensible template engine (in fact it could be called
+a _template engine framework_) that allows you to define and customize the way
+your templates will be processed to a fine level of detail.
 -->
-Thymeleafは非常に拡張性の高いテンプレートエンジンです(実際「テンプレートエンジンフレームワーク」と呼んだほうがいいかもしれません)。Thymeleafでは、処理対象のDOMノードと、そのDOMノードをどのように処理するかを完全に定義することができます。
+Thymeleafは非常に拡張性の高いテンプレートエンジンです(実際「テンプレートエンジンフレームワーク」と呼べるかもしれません)。Thymeleafでは、テンプレートをどのように処理するかという定義やカスタマイズを、細かいレベルで行うことができます。
 
 <!--
-An object that applies some logic to a DOM node is called a _processor_, and a
-set of these processors ーーーplus some extra artifactsーーー is called a dialect, of
-which Thymeleaf's core library provides one out-of-the-box called the _Standard Dialect_,
-which should be enough for the needs of a big percent of users.
+An object that applies some logic to a markup artifact (a tag, some text, a
+comment, or a mere placeholder if templates are not markup) is called a _processor_,
+and a set of these processors -- plus perhaps some extra artifacts -- is what
+a **dialect** is normally comprised of. Out of the box, Thymeleaf's core library
+provides a dialect called the **Standard Dialect**, which should be enough for
+most users.
 -->
-DOMノードにロジックを適用するものを「プロセッサ」と呼びます。そして、プロセッサ一式 --- と、いくつかの特別な生成物 --- のことをダイアレクトと呼びます。Thymeleafでは「スタンダードダイアレクト」というそのまますぐに使えるコアライブラリを提供していて、大半のユーザーにとってはこれで十分です。
+マークアップの生成物(タグやテキストやコメント、またはテンプレートがマークアップではない場合は単なるプレースホルダー)にロジックを適用するものを「プロセッサ」と呼びます。 **ダイアレクト** は通常、一式のプロセッサ -- と、おそらくいくつかの特別な生成物を合わせたもの -- によって構成されます。Thymeleafのコアライブラリでは **スタンダードダイアレクト** というそのまますぐに使えるダイアレクトを提供していて、大半のユーザーにとってはこれで十分です。
 
 <!--
-_The Standard Dialect is the dialect this tutorial covers_. Every attribute and
-syntax feature you will learn about in the following pages is defined by this
-dialect, even if that isn't explicitly mentioned.
+> Note that dialects can actually have no processors and be entirely comprised
+> of other kinds of artifacts, but processors are definitely the most common
+> use case.
 -->
-このチュートリアルでカバーしているのはスタンダードダイアレクトです。以降のページで学ぶ全ての属性や文法は特に明記していなくても、このダイアレクトに定義してあります。
+> 実際のところ、ダイアレクトにはプロセッサを含んでいなくてもよくて、完全に別の種類の生成物で構成することも可能であることを知っておいてください。とはいっても、プロセッサが間違いなく最も一般的な使用例です。
 
 <!--
-Of course, users may create their own dialects (even extending the Standard one)
+_This tutorial covers the Standard Dialect_. Every attribute and syntax feature
+you will learn about in the following pages is defined by this dialect, even if
+that isn't explicitly mentioned.
+-->
+このチュートリアルではスタンダードダイアレクトをカバーしています。以降のページで学ぶ全ての属性や文法は特に明記していなくても、このダイアレクトに定義してあります。
+
+<!--
+Of course, users can create their own dialects (even extending the Standard one)
 if they want to define their own processing logic while taking advantage of the
-library's advanced features. A Template Engine can be configured several
+library's advanced features. Thymeleaf can also be configured to use several
 dialects at a time.
 -->
-もちろん、ライブラリの拡張機能を利用して独自の処理ロジックを定義したい、など(スタンダードダイアレクトを拡張することも含めて)独自のダイアレクトを作りたい場合があるかもしれません。テンプレートエンジンは複数のダイアレクトを同時に使用できます。
+もちろん、ライブラリの高度な機能を利用しながら独自の処理ロジックを定義したい場合には、(スタンダードダイアレクトを拡張することも含めて)独自のダイアレクトを作成することも可能です。Thymeleafでは複数のダイアレクトを同時に使用する設定もできます。
 
 <!--
-> The official thymeleaf-spring3 and thymeleaf-spring4 integration packages 
-> both define a dialect called the "SpringStandard Dialect", mostly equivalent 
-> to the Standard Dialect but with small adaptations to make better use of some 
-> features in Spring Framework (for example, by using Spring Expression Language 
-> instead of Thymeleaf's standard OGNL). So if you are a Spring MVC user you are 
-> not wasting your time, as almost everything you learn here will be of use in 
+> The official thymeleaf-spring3 and thymeleaf-spring4 integration packages
+> both define a dialect called the "SpringStandard Dialect", which is mostly the
+> same as the Standard Dialect, but with small adaptations to make better use of
+> some features in the Spring Framework (for example, by using Spring Expression
+> Language or SpringEL instead of OGNL). So if you are a Spring MVC user you are
+> not wasting your time, as almost everything you learn here will be of use in
 > your Spring applications.
 -->
-> 公式の thymeleaf-spring3 と thymeleaf-spring4 連携パッケージはどちらも「Springスタンダードダイアレクト」と呼ばれるダイアレクトを定義しています。これは、ほぼスタンダードダイアレクトと同じで、そこにSpring Framework用の便利機能を少しだけ適用しています(例えば、Thymeleaf標準のOGNLの代わりにSpring式言語を使用するなど)。ですので、Spring MVCを使用するような場合でも時間の無駄にはなりません。ここで学ぶことは全て、Springアプリケーションを作成する際にも役立つでしょう。
-
-<!--
-The Thymeleaf Standard Dialect can process templates in any mode, but is
-especially suited for web-oriented template modes (XHTML and HTML5 ones).
-Besides HTML5, it specifically supports and validates the following XHTML
-specifications: _XHTML 1.0 Transitional_, _XHTML 1.0 Strict_, _XHTML 1.0 Frameset_,
-and _XHTML 1.1_.
--->
-Thymeleafのスタンダードダイアレクトはどのテンプレートモードでも使用できますが、特にウェブ向けのテンプレートモードに適しています(XHTMLとHTML5モード)。HTML5の他に具体的には以下のXHTML仕様をサポート・動作確認しています: "XHTML 1.0 Transitional"、"XHTML 1.0 Strict"、"XHTML 1.0 Frameset"、そして "XHTML 1.1" です。
+> 公式のthymeleaf-spring3とthymeleaf-spring4連携パッケージはどちらも「Springスタンダードダイアレクト」と呼ばれるダイアレクトを定義しています。これは、ほぼスタンダードダイアレクトと同じで、そこにSpring Framework用の便利機能を少しだけ適用しています(例えば、 OGNLの代わりにSpring式言語やSpringELを使用するなど)。ですので、Spring MVCを使用するような場合でも時間の無駄にはなりません。ここで学ぶことは全て、Springアプリケーションを作成する際にも役立つでしょう。
 
 <!--
 Most of the processors of the Standard Dialect are _attribute processors_. This
-allows browsers to correctly display XHTML/HTML5 template files even before
-being processed, because they will simply ignore the additional attributes. For
+allows browsers to correctly display HTML template files even before
+being processed because they will simply ignore the additional attributes. For
 example, while a JSP using tag libraries could include a fragment of code not
 directly displayable by a browser like:
 -->
-スタンダードダイアレクトの大半のプロセッサは「属性プロセッサ」です。属性プロセッサを使用すると、XHTML/HTML5テンプレートファイルは処理前であってもブラウザで正しく表示することができます。単純にその属性が無視されるからです。例えば、タグライブラリを使用したJSPだとブラウザで直接表示できない場合がありますが:
+スタンダードダイアレクトの大半のプロセッサは「属性プロセッサ」です。属性プロセッサを使用すると、HTMLテンプレートファイルは処理前であってもブラウザで正しく表示することができます。単純にその属性が無視されるからです。例えば、タグライブラリを使用したJSPだとブラウザで直接表示できない場合がありますが:
 
 ```html
 <form:inputText name="userName" value="${user.name}" />
@@ -184,100 +209,23 @@ Thymeleafスタンダードダイアレクトでは同様の機能をこのよ�
 ```
 
 <!--
-Which not only will be correctly displayed by browsers, but also allow us to
+Not only will this be correctly displayed by browsers, but this also allow us to
 (optionally) specify a value attribute in it ("James Carrot", in this case) that
 will be displayed when the prototype is statically opened in a browser, and that
 will be substituted by the value resulting from the evaluation of `${user.name}`
-during Thymeleaf processing of the template.
+during processing of the template.
 -->
-ブラウザで正しく表示できるだけでなく、(任意ですが)value属性を指定することもできます(この場合の "James Carrot" の部分です)。プロトタイプを静的にブラウザで開いた場合にはこの値が表示され、Thymeleafでテンプレートを処理した場合には `${user.name}` の評価結果値で置き換えられます。
+ブラウザで正しく表示できるだけでなく、(任意ですが)value属性を指定することもできます(この場合の"James Carrot"の部分です)。プロトタイプを静的にブラウザで開いた場合にはこの値が表示され、テンプレートを処理した場合には `${user.name}` の評価結果値で置き換えられます。
 
 <!--
-If needed, this will allow your designer and developer to work on the very same
-template file and reduce the effort required to transform a static prototype
-into a working template file. The ability to do this is a feature usually called
-_Natural Templating_.
+This helps your designer and developer to work on the very same template file
+and reduce the effort required to transform a static prototype into a working
+template file. The ability to do this is a feature called _Natural Templating_.
 -->
-必要な場合には、全く同じファイルをデザイナーとデベロッパーが触ることができるので、静的なプロトタイプをテンプレートに変換する労力を減らすことができます。この機能のことを「ナチュラルテンプレーティング」と呼びます。
+これにより、全く同じファイルをデザイナーとデベロッパーが触り、静的なプロトタイプをテンプレートに変換する労力を減らすことができます。この機能のことを「ナチュラルテンプレーティング」と呼びます。
 
 
-<!--
-1.4 Overall Architecture
--->
-1.4 全体のアーキテクチャ
-------------------------
 
-<!--
-Thymeleaf's core is a DOM processing engine. Specifically, it uses its own
-high-performance DOM implementation ーーーnot the standard DOM APIーーー for building
-in-memory tree representations of your templates, on which it later operates by
-traversing their nodes and executing processors on them that modify the DOM
-according to the current _configuration_ and the set of data that is passed to
-the template for its representation ーーーknown as the context.
--->
-ThymeleafのコアはDOM処理エンジンです。具体的にいうと ---標準のDOM APIではなく--- 高性能の独自DOM実装によってテンプレートのインメモリツリー表現を生成します。その後、そのインメモリツリー上でノードを走査してプロセッサを実行しDOMを変更します。DOMの変更は現在の設定や、テンプレートに渡されるコンテキストと呼ばれるデータセットに従います。
-
-<!--
-The use of a DOM template representation makes it very well suited for web
-applications because web documents are very often represented as object trees
-(in fact DOM trees are the way browsers represent web pages in memory). Also,
-building on the idea that most web applications use only a few dozen templates,
-that these are not big files and that they don't normally change while the
-application is running, Thymeleaf's usage of an in-memory cache of parsed
-template DOM trees allows it to be fast in production environments, because very
-little I/O is needed (if any) for most template processing operations. 
--->
-ウェブドキュメントはオブジェクトツリーとして表現されることが本当によくあるので、DOMテンプレート表現の使用はウェブアプリケーションにとても適しています(実際にブラウザはDOMツリーによってメモリ上でウェブページを表現します)。また、多くのウェブアプリケーションで、使用するテンプレート数は数十個程度である、そのテンプレートが大きなサイズではない、アプリケーションの実行中に通常は変更されない、という考えに基づいてThymeleafはテンプレートのDOMツリーのインメモリキャッシュを利用しています。これによって多くのテンプレート処理で(必要だとしても)ほんの少しのI/Oしか必要なくなるので、本番環境での実行を速くすることができます。
-
-<!--
-> If you want more detail, later in this tutorial there is an entire chapter
-> dedicated to caching and to the way Thymeleaf optimizes memory and resource
-> usage for faster operation.
--->
-> このチュートリアルの後ろの方にキャッシュについてと、高速な処理のためにThymeleafがどのようにメモリとリソースを最適化しているかについて説明した章がありますので詳細はそちらを参照してください。
-
-<!--
-Nevertheless, there is a restriction: this architecture also requires the use of
-bigger amounts of memory space for each template execution than other template parsing/processing approaches, which means that you should not use the library for creating big data XML documents (as opposed to web documents). As a general rule of thumb (and always depending on the memory size of your JVM), if you are generating XML files with sizes around the tens of megabytes in a single template execution, you probably should not be using Thymeleaf.
--->
-しかし、制約もあります: このアーキテクチャではテンプレート処理に他のアプローチよりも多くのメモリスペースが必要になります。つまり、(ウェブドキュメントとは対照的な)大きなサイズのデータXMLの作成には使わない方が良いということです。大まかには(といってもJVMのメモリサイズによりますが)1テンプレートを処理するのに数十メガバイトが必要になるXMLファイルを処理する場合は、おそらくThymeleafを使わない方が良いでしょう。
-
-<!--
-> The reason we consider this restriction only applies to data XML files and not
-> web XHTML/HTML5 is that you should never generate web documents so big that
-> your users' browsers set ablaze and/or explode ーー remember that these browsers
-> will also have to create DOM trees for your pages!
--->
-> ここで、データXMLに対してだけこの制約について考えているのは、ウェブのXHTML/HTML5に関しては、そんなに大きなサイズのドキュメントは作成しないからです。ブラウザもDOMツリーを生成するので、そんなことをすると固まってしまいますもんね。
-
-<!--
-1.5 Before going any further, you should read...
--->
-1.5 次に進む前に読むことをお勧めします...
-------------------------------------------------
-
-<!--
-Thymeleaf is especially suited for working in web applications. And web
-applications are based on a series of standards that everyone should know very
-well but few do ーー even if they have been working with them for years.
--->
-Thymeleafは特にウェブアプリケーションに適しています。そしてウェブアプリケーションには標準というものがあります。みんながこの標準についてよく知っているべきなのですが、ほとんどの人が知りません。たとえウェブアプリケーションの仕事を何年もやっている人であってもです。
-
-<!--
-With the advent of HTML5, the state of the art in web standards today is more
-confusing than ever... _are we going back from XHTML to HTML? Will we abandon
-XML syntax? Why is nobody talking about XHTML 2.0 anymore?_
--->
-HTML5の出現によって、今日のウェブ標準はかつてないほどに混乱しています... 「XHTMLからHTMLに戻るの？」「XMLシンタックスはなくなるの？」「XHTML2.0はどこにいったの？」
-
-<!--
-So before going any further in this tutorial, you are strongly advised to read
-an article on Thymeleaf's web site called _"From HTML to HTML (via HTML)"_,
-which you can find at this address:
-[http://www.thymeleaf.org/doc/articles/fromhtmltohtmlviahtml.html](http://www.thymeleaf.org/doc/articles/fromhtmltohtmlviahtml.html)
--->
-ということでこのチュートリアルでは先に進む前に、Thymeleafのウェブサイトの次の記事を読むことを強くお勧めします:
-_"From HTML to HTML (via HTML)"_ [http://www.thymeleaf.org/doc/articles/fromhtmltohtmlviahtml.html](http://www.thymeleaf.org/doc/articles/fromhtmltohtmlviahtml.html)
 
 <!--
 2 The Good Thymes Virtual Grocery
