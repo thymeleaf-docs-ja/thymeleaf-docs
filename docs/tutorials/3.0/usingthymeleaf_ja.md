@@ -30,7 +30,7 @@ Thymeleaf is a modern server-side Java template engine for both web and
 standalone environments, capable of processing HTML, XML, JavaScript, CSS and
 even plain text.
 -->
-Thymeleafは、ウェブ・スタンドアローンどちらの環境でも使える、モダンなサーバーサイドJavaテンプレートエンジンです。HTML、XML、JavaScript、CSS、そしてプレーンテキストも処理することができます。
+Thymeleafは、ウェブ・スタンドアローンどちらの環境でも使える、モダンなサーバーサイドJavaテンプレートエンジンです。HTML、XML、JavaScript、CSS、そしてプレーンテキストでさえも処理することができます。
 
 <!--
 The main goal of Thymeleaf is to provide an elegant and highly-maintainable way
@@ -39,14 +39,14 @@ Templates* to inject its logic into template files in a way that doesn't affect
 the template from being used as a design prototype. This improves communication
 of design and bridges the gap between design and development teams.
 -->
-Thymeleafのメインゴールは、優雅で保守性の高いテンプレート作成方法を提供することです。これを実現するために「ナチュラルテンプレート」というコンセプトを採用しており、デザインプロトタイプとして使用されているテンプレートに影響することなく、ロジックを注入することが可能です。これによって、デザインのコミュニケーションが改善され、デザインチームと開発チームの溝を埋めることができます。
+Thymeleafのメインゴールは、優雅で保守性の高いテンプレート作成方法を提供することです。これを実現するために「ナチュラルテンプレート」というコンセプトを採用しており、デザインプロトタイプとして使用されているテンプレートに影響することなく、ロジックを注入することが可能です。これによってデザインのコミュニケーションが改善され、デザインチームと開発チームの溝を埋めることができます。
 
 <!--
 Thymeleaf has also been designed from the beginning with Web Standards in mind
 -- especially **HTML5** -- allowing you to create fully validating templates if
 that is a need for you.
 -->
-また、Thymeleafはウェブ標準 -- 特に **HTML5** -- を念頭に置いて設計されており、あなたが必要とする完全にバリデーションされたテンプレートを作成することができます。
+また、Thymeleafは当初からウェブ標準 -- 特に **HTML5** -- を念頭に置いて設計されているので、もし必要であれば完全にバリデーションされたテンプレートを作成することも可能です。
 
 
 
@@ -89,7 +89,7 @@ to be well-formed -- no unclosed tags, no unquoted attributes, etc -- and
 the parser will throw exceptions if well-formedness violations are found. Note
 that no *validation* (against a DTD or XML Schema) will be performed.
 -->
-**`XML`** テンプレートモードは、XML入力です。この場合、コードは整形式であること -- 閉じられていないタグが無いこと、クォートされていない属性が無いことなど -- が求められ、整形式違反があった場合はパーサーが例外をスローします。DTDやXMLスキーマに対する「バリデーション」は行われないことに注意してください。
+**`XML`** テンプレートモードでは、XML入力を受け付けます。この場合、コードは整形式であること -- 閉じられていないタグが無いこと、クォートされていない属性が無いことなど -- が求められ、整形式違反があった場合はパーサーが例外を投げます。DTDやXMLスキーマに対する「バリデーション」は行われないことに注意してください。
 
 <!--
 The **`TEXT`** template mode will allow the use of a special syntax for
@@ -108,7 +108,7 @@ JavaScript-specific integrations such as specialized escaping or *natural
 scripting*. The `JAVASCRIPT` template mode is considered a *textual* mode
 and therefore uses the same special syntax as the `TEXT` template mode.
 -->
-**`JAVASCRIPT`** テンプレートモードは、Thymeleafアプリケーション内のJavaScriptファイルを処理することができます。つまりHTMLファイルと同様に、JavaScriptファイル内でもモデルデータを使用できるということです。また、特殊エスケープや「ナチュラルスクリプティング」などのJavaScript固有の機能もあります。 **`JAVASCRIPT`** テンプレートモードは「テキスト形式の」モードとして考えられるので、 `TEXT` テンプレートモードと同じ特殊な構文を使用します。
+**`JAVASCRIPT`** テンプレートモードでは、Thymeleafアプリケーション内のJavaScriptファイルを処理することができます。つまりHTMLファイルと同様に、JavaScriptファイル内でもモデルデータを使用できるということです。また、特別なエスケープや「ナチュラルスクリプティング」などのJavaScript固有の機能もあります。 **`JAVASCRIPT`** テンプレートモードは「テキスト形式の」モードとして考えられるので、 `TEXT` テンプレートモードと同じ特別な構文を使用します。
 
 <!--
 The **`CSS`** template mode will allow the processing of CSS files involved in a
@@ -116,7 +116,7 @@ Thymeleaf application. Similar to the `JAVASCRIPT` mode, the `CSS` template mode
 is also a *textual* mode and uses the special processing syntax from the `TEXT`
 template mode.
 -->
-**`CSS`** テンプレートモードは、Thymeleafアプリケーションに含まれているCSSファイルを処理することができます。 `JAVASCRIPT` モードと同様に `CSS` テンプレートモードも「テキスト形式の」モードなので、 `TEXT` テンプレートモードからきた特別な構文を利用します。
+**`CSS`** テンプレートモードでは、Thymeleafアプリケーションに含まれているCSSファイルを処理することができます。 `JAVASCRIPT` モードと同様に `CSS` テンプレートモードも「テキスト形式の」モードなので、 `TEXT` テンプレートモードの特別な処理構文を利用します。
 
 <!--
 The **`RAW`** template mode will simply not process templates at all. It is meant
@@ -125,7 +125,7 @@ the templates being processed. For example, external, uncontrolled resources in
 HTML format could be included into application templates, safely knowing that
 any Thymeleaf code that these resources might include will not be executed.
 -->
-**`RAW`** テンプレートモードは、単純にテンプレートに対して何も処理をしません。これは、処理中のテンプレートに対して、(ファイルやURLレスポンスなどの)リソースを変更せずにそのまま挿入する際に使用されます。例えば、外部にあって自分達の管理下にないHTML形式のリソースを、アプリケーションのテンプレートにインクルードする場合を考えます。この時、外部リソースにThymeleafのコードが含まれていたとしても、そのコードは実行されないことが分かっているので安心です。
+**`RAW`** テンプレートモードでは、単純にテンプレートに対して何も処理をしません。これは、処理中のテンプレートに対して、(ファイルやURLレスポンスなどの)リソースを変更せずにそのまま挿入する際に使用されます。例えば、外部にあって自分達の管理下にないHTML形式のリソースを、アプリケーションのテンプレートにインクルードする場合を考えます。この時、外部リソースにThymeleafのコードが含まれていたとしても、そのコードは実行されないことが分かっているので安心です。
 
 
 
@@ -157,7 +157,7 @@ most users.
 > of other kinds of artifacts, but processors are definitely the most common
 > use case.
 -->
-> 実際のところ、ダイアレクトにはプロセッサを含んでいなくてもよくて、完全に別の種類の生成物で構成することも可能であることに注意してください。とはいっても、プロセッサが間違いなく最も一般的な使用例です。
+> 実際のところ、ダイアレクトにはプロセッサを含んでいなくてもよくて、完全に別の種類の生成物で構成することも可能であることを知っておいてください。とはいっても、プロセッサが間違いなく最も一般的な使用例です。
 
 <!--
 _This tutorial covers the Standard Dialect_. Every attribute and syntax feature
