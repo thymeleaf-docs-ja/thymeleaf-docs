@@ -5466,7 +5466,7 @@ ${#locale}
 <!--
 ### Web context namespaces for request/session attributes, etc.
 -->
-### request/session 属性などに対するウェブコンテキストネームスペース
+### リクエスト/セッション属性などに対するウェブコンテキストネームスペース
 
 <!--
 When using Thymeleaf in a web environment, we can use a series of shortcuts for
@@ -5553,7 +5553,7 @@ ${session.containsKey('foo')}
 <!--
  * **application** : for retrieving application/servlet context attributes.
 -->
- * **application** : アプリケーション/サーブレットコンテキストを取得するために使用します。
+ * **application** : アプリケーション/サーブレットコンテキスト属性を取得するために使用します。
 
 <!--
 ```java
