@@ -5403,13 +5403,15 @@ templateEngine.clearTemplateCacheFor("/users/userList");
 
 
 
-17 Appendix A: Expression Basic Objects
+
+18 Appendix A: Expression Basic Objects
 =======================================
 
 <!--
-Some objects and variable maps are always available to be invoked at variable expressions (executed by OGNL or SpringEL). Let's see them:
+Some objects and variable maps are always available to be invoked. Let's see
+them:
 -->
-(OGNLやSpringELによって実行される)変数式の中で、常に使用可能なオブジェクトや変数マップがあります。それを見てみましょう:
+常に利用可能なオブジェクトや変数マップがあります。それらを見てみましょう:
 
 <!--
 ### Base objects
@@ -5417,13 +5419,16 @@ Some objects and variable maps are always available to be invoked at variable ex
 ### 基本オブジェクト
 
 <!--
- * **\#ctx** : the context object. It will be an implementation of `org.thymeleaf.context.IContext`, 
-   `org.thymeleaf.context.IWebContext` depending on our environment (standalone or web). If we are
-   using the _Spring integration module_, it will be an instance of 
-   `org.thymeleaf.spring[3|4].context.SpringWebContext`.
--->
- * **\#ctx** : コンテキストオブジェクト。環境(スタンドアローンかウェブか)によって `org.thymeleaf.context.IContext` や `org.thymeleaf.context.IWebContext` の実装になります。 _Spring連携モジュール_ を使用している場合は、 `org.thymeleaf.spring[3|4].context.SpringWebContext` のインスタンスになります。
+ * **\#ctx** : the context object. An implementation of `org.thymeleaf.context.IContext` 
+   or `org.thymeleaf.context.IWebContext` depending on our environment
+   (standalone or web).
 
+   Note `#vars` and `#root` are synomyns for the same object, but using `#ctx`
+   is recommended.
+-->
+ * **\#ctx** : コンテキストオブジェクト。環境(スタンドアローンかウェブか)によって `org.thymeleaf.context.IContext` または `org.thymeleaf.context.IWebContext` の実装になります。
+
+   このオブジェクトの同意語として `#vars` と `#root` がありますが `#ctx` の利用を推奨しています。
 
 ```java
 /*
@@ -5433,7 +5438,7 @@ Some objects and variable maps are always available to be invoked at variable ex
  */
 
 ${#ctx.locale}
-${#ctx.variables}
+${#ctx.variableNames}
 
 /*
  * ======================================================================
@@ -5441,18 +5446,15 @@ ${#ctx.variables}
  * ======================================================================
  */
 
-${#ctx.applicationAttributes}
-${#ctx.httpServletRequest}
-${#ctx.httpServletResponse}
-${#ctx.httpSession}
-${#ctx.requestAttributes}
-${#ctx.requestParameters}
+${#ctx.request}
+${#ctx.response}
+${#ctx.session}
 ${#ctx.servletContext}
-${#ctx.sessionAttributes}
 ```
 
 <!--
- * **\#locale** : direct access to the `java.util.Locale` associated with current request.
+ * **\#locale** : direct access to the `java.util.Locale` associated with
+   current request.
 -->
  * **\#locale** : 現在のリクエストに関連付けられている `java.util.Locale` への直接アクセス。
 
@@ -5460,55 +5462,32 @@ ${#ctx.sessionAttributes}
 ${#locale}
 ```
 
-<!--
- * **\#vars** : an instance of `org.thymeleaf.context.VariablesMap` with all the variables in the Context
-    (usually the variables contained in `#ctx.variables` plus local ones).
-
-    Unqualified expressions are evaluated against this object. In fact, `${something}` is completely equivalent
-    to (but more beautiful than) `${#vars.something}`.
-
-    `#root` is a synomyn for the same object.
--->
- * **\#vars** : コンテキスト内の全ての変数を持った `org.thymeleaf.context.VariablesMap` のインスタンス(通常は `#ctx.variables` に含まれている変数にローカル変数を加えたものです)。
-
-    限定子がついていない式はこのオブジェクトに対して評価されます。実際のところ `${something}` は `${#vars.something}` と完全に同等です(がより美しいです)。
-
-    `#root` はこのオブジェクトの同意語です。
-
-```java
-/*
- * ======================================================================
- * See javadoc API for class org.thymeleaf.context.VariablesMap
- * ======================================================================
- */
-
-${#vars.get('foo')}
-${#vars.containsKey('foo')}
-${#vars.size()}
-...
-```
 
 <!--
 ### Web context namespaces for request/session attributes, etc.
 -->
-### request/session 属性などに対するウェブコンテキストネームスペース
+### リクエスト/セッション属性などに対するウェブコンテキストネームスペース
 
 <!--
-When using Thymeleaf in a web environment, we can use a series of shortcuts for accessing request parameters, session attributes and application attributes:
+When using Thymeleaf in a web environment, we can use a series of shortcuts for
+accessing request parameters, session attributes and application attributes:
 -->
-ウェブ環境でThymeleafを使っている場合、リクエストパラメータ、セッション属性、アプリケーション属性にアクセスするのにショートカットを使用することができます。
+ウェブ環境でThymeleafを使っている場合、リクエストパラメータ、セッション属性、アプリケーション属性にアクセスするのに一連のショートカットを使用することができます。
 
 <!--
-   > Note these are not *context objects*, but maps added to the context as variables, so we access them without `#`. In some way, therefore, they act as *namespaces*.
+> Note these are not *context objects*, but maps added to the context as
+> variables, so we access them without `#`. In some way, they act as *namespaces*.
 -->
-   > これらは「コンテキストオブジェクト」ではなく、コンテキストに対して変数として追加されたマップです。ですので `#` を使いません。そのため、ある意味で「名前空間」のように振る舞います。
+> これらは「コンテキストオブジェクト」ではなく、コンテキストに対して変数として追加されたマップです。ですので `#` を使いません。ある意味で「名前空間」のように振る舞います。
 
 <!--
- * **param** : for retrieving request parameters. `${param.foo}` is a
-   `String[]` with the values of the `foo` request parameter, so `${param.foo[0]}` will normally be used for getting the first value.
+ * **param** : for retrieving request parameters. `${param.foo}` is a `String[]`
+   with the values of the `foo` request parameter, so `${param.foo[0]}` will
+   normally be used for getting the first value.
 -->
  * **param** : リクエストパラメータを取得するために使用します。 `${param.foo}` は `foo` リクエストパラメータの値を持つ `String[]` です。ですので、最初の値を取得するために普通は `${param.foo[0]}` を使用します。
 
+<!--
 ```java
 /*
  * ============================================================================
@@ -5522,13 +5501,27 @@ ${param.isEmpty()}
 ${param.containsKey('foo')}
 ...
 ```
+-->
+```java
+/*
+ * ============================================================================
+ * See javadoc API for class org.thymeleaf.context.WebRequestParamsVariablesMap
+ * ============================================================================
+ */
+
+${param.foo}              // 'foo'リクエストパラメータの値を持つString[]を取得
+${param.size()}
+${param.isEmpty()}
+${param.containsKey('foo')}
+...
+```
 
 <!--
  * **session** : for retrieving session attributes.
 -->
  * **session** : セッション属性を取得するために使用します。
 
-
+<!--
 ```java
 /*
  * ======================================================================
@@ -5542,13 +5535,27 @@ ${session.isEmpty()}
 ${session.containsKey('foo')}
 ...
 ```
+-->
+```java
+/*
+ * ======================================================================
+ * See javadoc API for class org.thymeleaf.context.WebSessionVariablesMap
+ * ======================================================================
+ */
+
+${session.foo}                 // 'foo'セッション属性を取得
+${session.size()}
+${session.isEmpty()}
+${session.containsKey('foo')}
+...
+```
 
 <!--
  * **application** : for retrieving application/servlet context attributes.
 -->
- * **application** : アプリケーション/サーブレットコンテキストを取得するために使用します。
+ * **application** : アプリケーション/サーブレットコンテキスト属性を取得するために使用します。
 
-
+<!--
 ```java
 /*
  * =============================================================================
@@ -5562,9 +5569,25 @@ ${application.isEmpty()}
 ${application.containsKey('foo')}
 ...
 ```
+-->
+```java
+/*
+ * =============================================================================
+ * See javadoc API for class org.thymeleaf.context.WebServletContextVariablesMap
+ * =============================================================================
+ */
+
+${application.foo}              // 'foo'サーブレットコンテキスト属性を取得
+${application.size()}
+${application.isEmpty()}
+${application.containsKey('foo')}
+...
+```
 
 <!--
-Note there is **no need to specify a namespace for accessing request attributes** (as opposed to *request parameters*) because all request attributes are automatically added to the context as variables in the context root:
+Note there is **no need to specify a namespace for accessing request attributes**
+(as opposed to *request parameters*) because all request attributes are
+automatically added to the context as variables in the context root:
 -->
 **リクエスト属性にアクセスする際には(リクエストパラメータとは対照的に)名前空間を指定する必要がない** ことに注意してください。なぜなら、全てのリクエスト属性は自動的にコンテキストルートの変数としてコンテキストに追加されるからです:
 
@@ -5578,69 +5601,49 @@ ${myRequestAttribute}
 ### ウェブコンテキストオブジェクト
 
 <!--
-Inside a web environment there is also direct access to the following objects (note these are objects, not maps/namespaces):
+Inside a web environment there is also direct access to the following objects
+(note these are objects, not maps/namespaces):
 -->
 ウェブ環境の場合は、次のようなオブジェクトにも直接アクセスすることができます(これらはオブジェクトであって、マップや名前空間ではないことに注意して下さい):
 
 <!--
- * **\#httpServletRequest** : direct access to the `javax.servlet.http.HttpServletRequest` object associated with the current request.
+ * **\#request** : direct access to the `javax.servlet.http.HttpServletRequest`
+   object associated with the current request.
 -->
- * **\#httpServletRequest** : 現在のリクエストに関連付けられた `javax.servlet.http.HttpServletRequest` オブジェクトへの直接アクセス
+ * **\#request** : 現在のリクエストに関連付けられた `javax.servlet.http.HttpServletRequest` オブジェクトへの直接アクセス
 
 
 ```java
-${#httpServletRequest.getAttribute('foo')}
-${#httpServletRequest.getParameter('foo')}
-${#httpServletRequest.getContextPath()}
-${#httpServletRequest.getRequestName()}
+${#request.getAttribute('foo')}
+${#request.getParameter('foo')}
+${#request.getContextPath()}
+${#request.getRequestName()}
 ...
 ```
 
 <!--
- * **\#httpSession** : direct access to the `javax.servlet.http.HttpSession` object associated with the current request.
+ * **\#session** : direct access to the `javax.servlet.http.HttpSession` object
+   associated with the current request.
 -->
- * **\#httpSession** : 現在のリクエストに関連付けられた `javax.servlet.http.HttpSession` オブジェクトへの直接アクセス。
+ * **\#session** : 現在のリクエストに関連付けられた `javax.servlet.http.HttpSession` オブジェクトへの直接アクセス。
 
 ```java
-${#httpSession.getAttribute('foo')}
-${#httpSession.id}
-${#httpSession.lastAccessedTime}
+${#session.getAttribute('foo')}
+${#session.id}
+${#session.lastAccessedTime}
 ...
 ```
 
 <!--
-### Spring context objects
+ * **\#servletContext** : direct access to the `javax.servlet.ServletContext`
+   object associated with the current request.
 -->
-### Springコンテキストオブジェクト
-
-<!--
-If you are using Thymeleaf from Spring, you can also access these objects:
--->
-SpringからThymeleafを使用している場合は、これらのオブジェクトにもアクセスできます:
-
-<!--
- * **\#themes** : provides the same features as the Spring `spring:theme` JSP tag.
--->
- * **\#themes** : Springの `spring:theme` JSPタグと同じ機能を提供します。
-
+ * **\#servletContext** : 現在のリクエストに関連付けられた `javax.servlet.ServletContext` オブジェクトへの直接アクセス。
 
 ```java
-${#themes.code('foo')}
-```
-
-<!--
-### Spring beans
--->
-### Springビーン
-
-<!--
-Thymeleaf also allows accessing beans registered at your Spring Application Context in the standard way defined  by Spring EL, which is using the syntax `@beanName`, for example:
--->
-Thymeleafでは、SpringELによってSpringアプリケーションコンテキストに通常の方法で定義されて登録されたビーンに `@beanName` シンタックスを使用してアクセスすることができます。例:
-
-
-```html
-<div th:text="${@authService.getUserName()}">...</div>
+${#servletContext.getAttribute('foo')}
+${#servletContext.contextPath}
+...
 ```
 
 
