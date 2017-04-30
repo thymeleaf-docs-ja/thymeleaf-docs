@@ -474,7 +474,7 @@ configuring one of the most important objects in a Thymeleaf application: the
 <!--
 Our `org.thymeleaf.TemplateEngine` object is initialized like this:
 -->
-ここでは `org.thymeleaf.TemplateEngine` を次のように初期化しています:
+`org.thymeleaf.TemplateEngine` は次のように初期化されています:
 
 <!--
 ```java
@@ -609,7 +609,7 @@ public interface ITemplateResolver {
     /*
      * テンプレートはテンプレート名(または内容)によって解決されます。
      * また、他のテンプレートに対するフラグメントを解決しようとしている場合は
-     * オーナーテンプレートによって解決されます。
+     * そのオーナーテンプレートによって解決されます。
      * このテンプレートリゾルバーで解決できない場合はnullを返します。
      */
     public TemplateResolution resolveTemplate(
@@ -628,7 +628,7 @@ _Servlet Context_: an application-wide `javax.servlet.ServletContext` object
 that exists in every Java web application, and that resolves resources from the
 web application root.
 -->
-テンプレートリゾルバーは、どのようにテンプレートにアクセスするかを決定する役割を担っています。GTVGアプリケーションでは `org.thymeleaf.templateresolver.ServletContextTemplateResolver` 実装を使用しているので、「サーブレットコンテキスト」からテンプレートファイルをリソースとして取得するということになります: Javaの全てのウェブアプリケーションにはアプリケーションレベルの `javax.servlet.ServletContext` というオブジェクトが存在し、ウェブアプリケーションルートからリソースを解決することができます。
+テンプレートリゾルバーは、どのようにテンプレートにアクセスするかを決定する役割を担っています。GTVGアプリケーションでは `org.thymeleaf.templateresolver.ServletContextTemplateResolver` 実装を使用しているので「サーブレットコンテキスト」からテンプレートファイルをリソースとして取得するということになります: Javaの全てのウェブアプリケーションにはアプリケーションレベルの `javax.servlet.ServletContext` というオブジェクトが存在し、ウェブアプリケーションルートからリソースを解決することができます。
 
 <!--
 But that's not all we can say about the template resolver, because we can set
