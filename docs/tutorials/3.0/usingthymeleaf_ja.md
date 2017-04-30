@@ -234,36 +234,43 @@ template file. The ability to do this is a feature called _Natural Templating_.
 =================================
 
 <!--
+The source code for the examples shown in this, and future chapters of this
+guide,  can be found in the [Good Thymes Virtual Grocery GitHub repository](https://github.com/thymeleaf/thymeleafexamples-gtvg).
+-->
+この章以降で使用しているサンプルのソースコードはこちらにあります: [Good Thymes Virtual Grocery GitHub repository](https://github.com/thymeleaf/thymeleafexamples-gtvg)
+
+
+
+<!--
 2.1 A website for a grocery
 -->
 2.1 食料品店用のウェブサイト
 ---------------------------
 
 <!--
-In order to better explain the concepts involved in processing templates with
-Thymeleaf, this tutorial will use a demo application you can download from the
-project web site.
+To better explain the concepts involved in processing templates with Thymeleaf,
+this tutorial will use a demo application which you can download from the
+project's web site.
 -->
-Thymeleafのテンプレート処理のコンセプトを分かりやすく説明するために、このチュートリアルではデモアプリケーションを使用します。デモアプリケーションはプロジェクトのウェブサイトからダウンロードできます。
+Thymeleafのテンプレート処理のコンセプトを分かりやすく説明するために、このチュートリアルではデモアプリケーションを使用します。デモアプリケーションはプロジェクトのウェブサイトからダウンロードすることができます。
 
 <!--
-This application represents the web site of an imaginary virtual grocery, and
-will provide us with the adequate scenarios to exemplify diverse Thymeleaf
-features.
+This application is the web site of an imaginary virtual grocery, and will
+provide us with many scenarios to showcase Thymeleaf's many features.
 -->
-このアプリケーションは架空の仮想食料品店のウェブサイトで、様々なThymeleafの機能の例をお見せするのに十分なシナリオが用意されています。
+このアプリケーションは架空の仮想食料品店のウェブサイトです。様々なシナリオでThymeleafの機能を紹介していきます。
 
 <!--
-We will need a quite simple set of model entities for our application: `Products`
+To start, we need a simple set of model entities for our application: `Products`
 which are sold to `Customers` by creating `Orders`. We will also be managing `Comments`
 about those `Products`:
 -->
-アプリケーションにはとてもシンプルなモデルエンティティが必要でしょう: `Products` は `Orders` を作成することによって `Customers` に販売されます。さらにこの `Products` について `Comments` も管理しましょう:
+まずはじめに、このアプリケーションにはシンプルなモデルエンティティが必要です: `Products` は `Orders` を作成することによって `Customers` に販売されます。 `Products` に対する `Comments` も管理しましょう:
 
 ![Example application model](images/usingthymeleaf/gtvg-model.png)
 
 <!--
-Our small application will also have a very simple service layer, composed by `Service`
+Our application will also have a very simple service layer, composed by `Service`
 objects containing methods like:
 -->
 とてもシンプルなサービスレイヤも作りましょう。次のようなメソッドを持つ `Service` オブジェクトです:
@@ -283,32 +290,43 @@ public class ProductService {
     
 }
 ```
+
 <!--
-Finally, at the web layer our application will have a filter that will delegate
+At the web layer our application will have a filter that will delegate
 execution to Thymeleaf-enabled commands depending on the request URL:
 -->
-最後に、リクエストURLに応じてThymeleafに処理を委譲するフィルタをウェブレイヤに作成しましょう:
+リクエストURLに応じて、Thymeleaf用のコントローラーに処理を渡すフィルタをウェブレイヤに作成しましょう:
 
+<!--
 ```java
 private boolean process(HttpServletRequest request, HttpServletResponse response)
         throws ServletException {
-        
+    
     try {
-            
+
+        // This prevents triggering engine executions for resource URLs
+        if (request.getRequestURI().startsWith("/css") ||
+                request.getRequestURI().startsWith("/images") ||
+                request.getRequestURI().startsWith("/favicon")) {
+            return false;
+        }
+
+        
         /*
          * Query controller/URL mapping and obtain the controller
          * that will process the request. If no controller is available,
          * return false and let other filters/servlets process the request.
          */
-        IGTVGController controller = GTVGApplication.resolveControllerForRequest(request);
+        IGTVGController controller = this.application.resolveControllerForRequest(request);
         if (controller == null) {
             return false;
         }
+
         /*
          * Obtain the TemplateEngine instance.
          */
-        TemplateEngine templateEngine = GTVGApplication.getTemplateEngine();
-            
+        ITemplateEngine templateEngine = this.application.getTemplateEngine();
+
         /*
          * Write the response headers
          */
@@ -319,18 +337,82 @@ private boolean process(HttpServletRequest request, HttpServletResponse response
 
         /*
          * Execute the controller and process view template,
-         * writing the results to the response writer.
+         * writing the results to the response writer. 
          */
         controller.process(
                 request, response, this.servletContext, templateEngine);
-
+        
         return true;
-            
+        
     } catch (Exception e) {
+        try {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } catch (final IOException ignored) {
+            // Just ignore this
+        }
         throw new ServletException(e);
     }
+    
+}
+```
+-->
+
+```java
+private boolean process(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException {
+    
+    try {
+
+        // リソースURLに対してはエンジンを実行しないようにします
+        if (request.getRequestURI().startsWith("/css") ||
+                request.getRequestURI().startsWith("/images") ||
+                request.getRequestURI().startsWith("/favicon")) {
+            return false;
+        }
+
         
-}    
+        /*
+         * コントローラー/URLマッピングに問い合わせて、リクエストを処理するための
+         * コントローラーを取得します。もしコントローラーが見つからなかった場合は
+         * falseを返して、他のフィルタ/サーブレットに処理を渡します。
+         */
+        IGTVGController controller = this.application.resolveControllerForRequest(request);
+        if (controller == null) {
+            return false;
+        }
+
+        /*
+         * TemplateEngineインスタンスを取得します。
+         */
+        ITemplateEngine templateEngine = this.application.getTemplateEngine();
+
+        /*
+         * レスポンスヘッダーを書き込みます。
+         */
+        response.setContentType("text/html;charset=UTF-8");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Cache-Control", "no-cache");
+        response.setDateHeader("Expires", 0);
+
+        /*
+         * コントローラーを実行してビューテンプレートを処理し、
+         * レスポンスライターに結果を書き込みます。
+         */
+        controller.process(
+                request, response, this.servletContext, templateEngine);
+        
+        return true;
+        
+    } catch (Exception e) {
+        try {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } catch (final IOException ignored) {
+            // 無視します
+        }
+        throw new ServletException(e);
+    }
+    
+}
 ```
 
 <!--
@@ -343,7 +425,7 @@ public interface IGTVGController {
 
     public void process(
             HttpServletRequest request, HttpServletResponse response,
-            ServletContext servletContext, TemplateEngine templateEngine);    
+            ServletContext servletContext, ITemplateEngine templateEngine);    
     
 }
 ```
@@ -351,21 +433,21 @@ public interface IGTVGController {
 <!--
 All we have to do now is create implementations of the `IGTVGController`
 interface, retrieving data from the services and processing templates using the
-`TemplateEngine` object.
+`ITemplateEngine` object.
 -->
-これで `IGTVGController` の実装を作成すれば良いだけです。データをサービスから受け取って `TemplateEngine` オブジェクトを使用してテンプレートを処理します。
+あとは `IGTVGController` インターフェイスの実装を作成するだけです。データをサービスから受け取って `ITemplateEngine` オブジェクトを使用してテンプレートを処理します。
 
 <!--
 In the end, it will look like this:
 -->
-最終的にはこのようになりますが:
+最終的にはこのようになります:
 
 ![Example application home page](images/usingthymeleaf/gtvg-view.png)
 
 <!--
 But first let's see how that template engine is initialized.
 -->
-まずはテンプレートエンジンの初期化について見てみましょう。
+でも、まずはテンプレートエンジンの初期化について見てみましょう。
 
 <!--
 2.2 Creating and configuring the Template Engine
@@ -374,25 +456,65 @@ But first let's see how that template engine is initialized.
 ------------------------------------------------
 
 <!--
-The _process(...)_ method in our filter contained this sentence:
+The _process(...)_ method in our filter contained this line:
 -->
-フィルタの _process(...)_ メソッドの中に次のような文があります:
+フィルタの _process(...)_ メソッドの中に次のような行があります:
 
 ```java
-TemplateEngine templateEngine = GTVGApplication.getTemplateEngine();
+ITemplateEngine templateEngine = this.application.getTemplateEngine();
 ```
 
 <!--
 Which means that the _GTVGApplication_ class is in charge of creating and
-configuring one of the most important objects in a Thymeleaf-enabled
-application: The `TemplateEngine` instance.
+configuring one of the most important objects in a Thymeleaf application: the
+`TemplateEngine` instance (implementation of the `ITemplateEngine` interface).
 -->
-これは、Thymeleafを使用するアプリケーションにおいて最も重要なオブジェクトの中の一つである `TemplateEngine` インスタンスの作成と設定を _GTVGApplication_ クラスが担っているということです。
+これは、Thymeleafアプリケーションにおいて最も重要なオブジェクトの中の一つである `TemplateEngine` インスタンス( `ITemplateEngine` インターフェイスの実装)の作成と設定を _GTVGApplication_ クラスが担っているということです。
 
 <!--
 Our `org.thymeleaf.TemplateEngine` object is initialized like this:
 -->
 ここでは `org.thymeleaf.TemplateEngine` を次のように初期化しています:
+
+<!--
+```java
+public class GTVGApplication {
+  
+    
+    ...
+    private static TemplateEngine templateEngine;
+    ...
+    
+    
+    public GTVGApplication(final ServletContext servletContext) {
+
+        super();
+
+        ServletContextTemplateResolver templateResolver = 
+                new ServletContextTemplateResolver(servletContext);
+        
+        // HTML is the default mode, but we set it anyway for better understanding of code
+        templateResolver.setTemplateMode(TemplateMode.HTML);
+        // This will convert "home" to "/WEB-INF/templates/home.html"
+        templateResolver.setPrefix("/WEB-INF/templates/");
+        templateResolver.setSuffix(".html");
+        // Template cache TTL=1h. If not set, entries would be cached until expelled by LRU
+        templateResolver.setCacheTTLMs(Long.valueOf(3600000L));
+        
+        // Cache is set to true by default. Set to false if you want templates to
+        // be automatically updated when modified.
+        templateResolver.setCacheable(true);
+        
+        this.templateEngine = new TemplateEngine();
+        this.templateEngine.setTemplateResolver(templateResolver);
+        
+        ...
+
+    }
+
+}
+```
+-->
 
 ```java
 public class GTVGApplication {
@@ -403,40 +525,41 @@ public class GTVGApplication {
     ...
     
     
-    static {
-        ...
-        initializeTemplateEngine();
-        ...
-    }
-    
-    
-    private static void initializeTemplateEngine() {
-        
+    public GTVGApplication(final ServletContext servletContext) {
+
+        super();
+
         ServletContextTemplateResolver templateResolver = 
-            new ServletContextTemplateResolver();
-        // XHTML is the default mode, but we set it anyway for better understanding of code
-        templateResolver.setTemplateMode("XHTML");
-        // This will convert "home" to "/WEB-INF/templates/home.html"
+                new ServletContextTemplateResolver(servletContext);
+        
+        // HTMLがデフォルトモードなのですが理解しやすいように設定しておきます
+        templateResolver.setTemplateMode(TemplateMode.HTML);
+        // "home"を"/WEB-INF/templates/home.html"に変換します
         templateResolver.setPrefix("/WEB-INF/templates/");
         templateResolver.setSuffix(".html");
-        // Template cache TTL=1h. If not set, entries would be cached until expelled by LRU
-        templateResolver.setCacheTTLMs(3600000L);
+        // テンプレートキャッシュのTTLを1時間にします。
+        // 設定しない場合エントリーはLRUで追い出されるまでキャッシュされます
+        templateResolver.setCacheTTLMs(Long.valueOf(3600000L));
         
-        templateEngine = new TemplateEngine();
-        templateEngine.setTemplateResolver(templateResolver);
+        // キャッシュはデフォルトでtrueにセットされています。
+        // テンプレートが変更されたときに自動的に更新したい場合はfalseにセットします。
+        templateResolver.setCacheable(true);
         
+        this.templateEngine = new TemplateEngine();
+        this.templateEngine.setTemplateResolver(templateResolver);
+        
+        ...
+
     }
-    
-    ...
 
 }
 ```
 
 <!--
-Of course there are many ways of configuring a `TemplateEngine` object, but for
-now these few lines of code will teach us enough about the steps needed.
+There are many ways of configuring a `TemplateEngine` object, but for now these
+few lines of code will teach us enough about the steps needed.
 -->
-もちろん `TemplateEngine` オブジェクトを初期化するのには様々な方法がありますが、今はこの数行のコードで十分です。
+`TemplateEngine` オブジェクトを初期化するのには様々な方法がありますが、今はこの数行のコードで十分です。
 
 
 <!--
@@ -447,17 +570,18 @@ now these few lines of code will teach us enough about the steps needed.
 <!--
 Let's start with the Template Resolver:
 -->
-テンプレートリゾルバーからスタートしましょう:
+テンプレートリゾルバーから始めましょう:
 
 ```java
-ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver();
+ServletContextTemplateResolver templateResolver = 
+        new ServletContextTemplateResolver(servletContext);
 ```
 
 <!--
 Template Resolvers are objects that implement an interface from the Thymeleaf
 API called `org.thymeleaf.templateresolver.ITemplateResolver`: 
 -->
-テンプレートリゾルバーはThymeleafのAPIである `org.thymeleaf.templateresolver.ITemplateResolver` を実装しています:
+テンプレートリゾルバーはThymeleafのAPIである `org.thymeleaf.templateresolver.ITemplateResolver` インターフェイスを実装したオブジェクトです:
 
 <!--
 ```java
@@ -466,12 +590,14 @@ public interface ITemplateResolver {
     ...
   
     /*
-     * Templates are resolved by String name (templateProcessingParameters.getTemplateName())
+     * Templates are resolved by their name (or content) and also (optionally) their 
+     * owner template in case we are trying to resolve a fragment for another template.
      * Will return null if template cannot be handled by this template resolver.
      */
     public TemplateResolution resolveTemplate(
-            TemplateProcessingParameters templateProcessingParameters);
-
+            final IEngineConfiguration configuration,
+            final String ownerTemplate, final String template,
+            final Map<String, Object> templateResolutionAttributes);
 }
 ```
 -->
@@ -481,11 +607,15 @@ public interface ITemplateResolver {
     ...
   
     /*
-     * 文字列名(templateProcessingParameters.getTemplateName())によってテンプレートを解決します。
-     * このテンプレートリゾルバーで解決できない場合は null を返します。
+     * テンプレートはテンプレート名(または内容)によって解決されます。
+     * また、他のテンプレートに対するフラグメントを解決しようとしている場合は
+     * オーナーテンプレートによって解決されます。
+     * このテンプレートリゾルバーで解決できない場合はnullを返します。
      */
     public TemplateResolution resolveTemplate(
-            TemplateProcessingParameters templateProcessingParameters);
+            final IEngineConfiguration configuration,
+            final String ownerTemplate, final String template,
+            final Map<String, Object> templateResolutionAttributes);
 
 }
 ```
@@ -493,30 +623,29 @@ public interface ITemplateResolver {
 <!--
 These objects are in charge of determining how our templates will be accessed,
 and in this GTVG application, the `org.thymeleaf.templateresolver.ServletContextTemplateResolver`
-implementation that we are using specifies that we are going to retrieve our
-template files as resources from the _Servlet Context_: an application-wide `javax.servlet.ServletContext`
-object that exists in every Java web application, and that resolves resources
-considering the web application root as the root for resource paths.
+means that we are going to retrieve our template files as resources from the
+_Servlet Context_: an application-wide `javax.servlet.ServletContext` object
+that exists in every Java web application, and that resolves resources from the
+web application root.
 -->
-テンプレートリゾルバーは、どうやってテンプレートにアクセスするかを決定する役割を担っています。GTVGアプリケーションの場合は `org.thymeleaf.templateresolver.ServletContextTemplateResolver` 実装を使用して _Servlet Context_ からテンプレートファイルを取得します: Javaの全てのウェブアプリケーションにはアプリケーションレベルの `javax.servlet.ServletContext` というオブジェクトが存在し、それによってウェブアプリケーションのルートをリソースパスのルートとしてリソースを解決することができます。
+テンプレートリゾルバーは、どのようにテンプレートにアクセスするかを決定する役割を担っています。GTVGアプリケーションでは `org.thymeleaf.templateresolver.ServletContextTemplateResolver` 実装を使用しているので、「サーブレットコンテキスト」からテンプレートファイルをリソースとして取得するということになります: Javaの全てのウェブアプリケーションにはアプリケーションレベルの `javax.servlet.ServletContext` というオブジェクトが存在し、ウェブアプリケーションルートからリソースを解決することができます。
 
 <!--
 But that's not all we can say about the template resolver, because we can set
-some configuration parameters on it. First, the template mode, one of the
-standard ones:
+some configuration parameters on it. First, the template mode:
 -->
-テンプレートリゾルバーにはいくつかのパラメータを設定することができます。まず、標準的なものとして、テンプレートモードがあります:
+でも、それだけではありません。テンプレートリゾルバーにはパラメータを設定することができます。まず、テンプレートモードがあります:
 
 ```java
-templateResolver.setTemplateMode("XHTML");
+templateResolver.setTemplateMode(TemplateMode.HTML);
 ```
 
 <!--
-XHTML is the default template mode for `ServletContextTemplateResolver`, but it
+HTML is the default template mode for `ServletContextTemplateResolver`, but it
 is good practice to establish it anyway so that our code documents clearly what
 is going on.
 -->
-XHTMLは `ServletContextTemplateResolver` のデフォルトテンプレートモードですが意図を明らかにするために書いておくのは良い習慣ですね。
+HTMLは `ServletContextTemplateResolver` のデフォルトテンプレートモードですが、意図を明らかにするために書いておくのは良い習慣です。
 
 ```java
 templateResolver.setPrefix("/WEB-INF/templates/");
@@ -527,8 +656,11 @@ templateResolver.setSuffix(".html");
 These _prefix_ and _suffix_ do exactly what it looks like: modify the template
 names that we will be passing to the engine for obtaining the real resource
 names to be used.
+===
+The _prefix_ and _suffix_ modify the template names that we will be passing to
+the engine for obtaining the real resource names to be used.
 -->
-_prefix_ と _suffix_ は文字通り、テンプレート名から実際のリソース名を作り出すために使用されます。
+_prefix_ と _suffix_ は、テンプレート名から実際のリソース名を作り出すために使用されます。
 
 <!--
 Using this configuration, the template name _"product/list"_ would correspond to:
@@ -543,31 +675,34 @@ servletContext.getResourceAsStream("/WEB-INF/templates/product/list.html")
 Optionally, the amount of time that a parsed template living in cache will be
 considered valid can be configured at the Template Resolver by means of the _cacheTTLMs_
 property:
+===
+Optionally, the amount of time that a parsed template can live in the cache is
+configured at the Template Resolver by means of the _cacheTTLMs_ property:
 -->
-任意ですが _cacheTTLMs_ でテンプレートキャッシュの生存期間を指定することもできます:
+任意ですがテンプレートリゾルバーの _cacheTTLMs_ プロパティで、パースされたテンプレートをキャッシュする時間を指定することができます:
 
 ```java
 templateResolver.setCacheTTLMs(3600000L);
 ```
 
 <!--
-Of course, a template can be expelled from cache before that TTL is reached if
-the max cache size is reached and it is the oldest entry currently cached.
+A template can still be expelled from cache before that TTL is reached if the
+max cache size is reached and it is the oldest entry currently cached.
 -->
-もちろんTTL以内であってもキャッシュのサイズが最大値に達した場合は古いエントリーから削除されます。
+TTL以内であってもキャッシュのサイズが最大値に達した場合は古いエントリーから追い出されます。
 
 <!--
 > Cache behaviour and sizes can be defined by the user by implementing the `ICacheManager`
-> interface or simply modifying the `StandardCacheManager` object set to manage
-> caches by default.
+> interface or by modifying the `StandardCacheManager` object to manage the
+> default cache.
 -->
-> キャッシュの振る舞いやサイズは `ICacheManager` インターフェイスの実装によって定義されます。または、単純にデフォルトで設定されている `StandardCacheManager` を修正しても良いです。
+> キャッシュの振る舞いやサイズは `ICacheManager` インターフェイスの実装によって定義することができます。または、デフォルトキャッシュ用の `StandardCacheManager` を修正しても良いです。
 
 <!--
-We will learn more about template resolvers later. Now let's have a look at the
-creation of our Template Engine object.
+There is much more to learn about template resolvers, but for now let's have a
+look at the creation of our Template Engine object.
 -->
-テンプレートリゾルバーについてのより詳細な説明は後ほど行います。今はテンプレートエンジンオブジェクトの生成について見てみましょう。
+テンプレートリゾルバーについて学ぶことはまだまだありますが、今はテンプレートエンジンオブジェクトの生成に進みましょう。
 
 <!--
 ### The Template Engine
@@ -575,10 +710,11 @@ creation of our Template Engine object.
 ### テンプレートエンジン
 
 <!--
-Template Engine objects are of class _org.thymeleaf.TemplateEngine_, and these
-are the lines that created our engine in the current example:
+Template Engine objects are implementations of the `org.thymeleaf.ITemplateEngine`
+interface. One of these implementations is offered by the Thymeleaf core:
+`org.thymeleaf.TemplateEngine`, and we create an instance of it here:
 -->
-テンプレートエンジンオブジェクトとは _org.thymeleaf.TemplateEngine_ のことです。現在の例ではこのようにエンジンを作成しています:
+テンプレートエンジンオブジェクトとは `org.thymeleaf.ITemplateEngine` の実装のことです。その実装の1つとして、Thymeleafのコアライブラリは `org.thymeleaf.TemplateEngine` を提供しており、ここでは、そのインスタンスを作成します:
 
 ```java
 templateEngine = new TemplateEngine();
@@ -589,14 +725,14 @@ templateEngine.setTemplateResolver(templateResolver);
 Rather simple, isn't it? All we need is to create an instance and set the
 Template Resolver to it.
 -->
-かなりシンプルですよね。インスタンスを作成してテンプレートリゾルバーをセットするだけです。
+結構シンプルですよね。インスタンスを作成してテンプレートリゾルバーをセットするだけです。
 
 <!--
-A template resolver is the only required parameter a `TemplateEngine` needs,
-although of course there are many others that will be covered later (message
-resolvers, cache sizes, etc). For now, this is all we need.
+A template resolver is the only *required* parameter a `TemplateEngine` needs,
+although there are many others that will be covered later (message resolvers,
+cache sizes, etc). For now, this is all we need.
 -->
-`TemplateEngine` に必須のパラメータはテンプレートリゾルバーだけです。もちろん他にも色々な設定があります(メッセージリゾルバーやキャッシュサイズなど)が、それについては後ほど説明します。今はこれだけで十分です。
+`TemplateEngine` に「必須」のパラメータはテンプレートリゾルバーだけです。他にも色々な設定がありますが(メッセージリゾルバーやキャッシュサイズなど)、それについては後ほど説明します。今はこれだけで十分です。
 
 <!--
 Our Template Engine is now ready and we can start creating our pages using
