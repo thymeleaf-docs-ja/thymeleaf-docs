@@ -653,10 +653,6 @@ templateResolver.setSuffix(".html");
 ```
 
 <!--
-These _prefix_ and _suffix_ do exactly what it looks like: modify the template
-names that we will be passing to the engine for obtaining the real resource
-names to be used.
-===
 The _prefix_ and _suffix_ modify the template names that we will be passing to
 the engine for obtaining the real resource names to be used.
 -->
@@ -672,10 +668,6 @@ servletContext.getResourceAsStream("/WEB-INF/templates/product/list.html")
 ```
 
 <!--
-Optionally, the amount of time that a parsed template living in cache will be
-considered valid can be configured at the Template Resolver by means of the _cacheTTLMs_
-property:
-===
 Optionally, the amount of time that a parsed template can live in the cache is
 configured at the Template Resolver by means of the _cacheTTLMs_ property:
 -->
