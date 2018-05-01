@@ -314,7 +314,7 @@ public class GTVGApplication {
         // This will convert "home" to "/WEB-INF/templates/home.html"
         templateResolver.setPrefix("/WEB-INF/templates/");
         templateResolver.setSuffix(".html");
-        // Template cache TTL=1h. If not set, entries would be cached until expelled by LRU
+        // Template cache TTL=1h. If not set, entries would be cached until expelled
         templateResolver.setCacheTTLMs(Long.valueOf(3600000L));
         
         // Cache is set to true by default. Set to false if you want templates to
@@ -1520,7 +1520,7 @@ is both more concise and versatile from a design standpoint:
 
 
 
-4.15 Data Conversion / Formatting
+4.14 Data Conversion / Formatting
 ---------------------------------
 
 Thymeleaf defines a *double-brace* syntax for variable (`${...}`) and selection
@@ -1555,7 +1555,7 @@ how to register a custom *conversion service* implementation, have a look at the
 
 
 
-4.14 Preprocessing
+4.15 Preprocessing
 ------------------
 
 In addition to all these features for expression processing, Thymeleaf has the
@@ -4403,10 +4403,10 @@ of configuration parameters, which include:
 
  * TTL in milliseconds for parsed template cache entries originated in this
    template resolver. If not set, the only way to remove an entry from the cache
-   will be LRU (cache max size exceeded and the entry is the oldest).
+   will be to exceed the cache max size (oldest entry will be removed).
 
     ```java
-    // Default is no TTL (only LRU would remove entries)
+    // Default is no TTL (only cache size exceeded would remove entries)
     templateResolver.setCacheTTLMs(60000L);
     ```
 
