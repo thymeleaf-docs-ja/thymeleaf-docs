@@ -1,7 +1,7 @@
 ---
 title: 'Tutorial: Using Thymeleaf (ja)'
 author: The Thymeleaf Team
-version: 20180428 - 28 April 2018
+version: 20180501 - 01 May 2018
 thymeleafVersion: 3.0.9.RELEASE
 language: Japanese
 lang: ja
